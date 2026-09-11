@@ -72,11 +72,15 @@ class _LoginPageState extends State<LoginPage>{
 
               const SizedBox(height: 30,),
 
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  label: Text(
+              Center(
+                child:  SizedBox(
+                  width: 1200, 
+                  height: 50,    
+                child:  TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    label: Text(
                     'E-mail',
                     style: GoogleFonts.quicksand(
                       fontWeight: FontWeight.bold,
@@ -84,20 +88,26 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                   hint: Text (
                     'Digite seu email',
-                    style: GoogleFonts.quicksand(
-                      fontWeight: FontWeight.bold,
+                      style: GoogleFonts.quicksand(
+                        fontWeight: FontWeight.bold,
                     ),
-                  ),
+                  ),         
                   prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
-                  
-                  
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(90)
+                  ), 
                 ),
               ),
+            ),
+          ),
 
               const SizedBox(height: 15,),
-
-              TextField(
+              
+              Center(
+                child:  SizedBox(
+                  width: 1200, 
+                  height: 50,   
+                child:  TextField(
                 controller: senhaController,
                 obscureText: esconderSenha,
                 decoration:  InputDecoration(
@@ -114,7 +124,9 @@ class _LoginPageState extends State<LoginPage>{
                     ),
                   ),
                   prefixIcon: Icon(Icons.lock),    
-                  border: OutlineInputBorder(),             
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(90)
+                  ),             
                   suffixIcon: IconButton(
                     onPressed: (){
                       setState(() {
@@ -129,11 +141,12 @@ class _LoginPageState extends State<LoginPage>{
                   )
                 ),
               ),
+            ),
+          ),
 
               const SizedBox(height: 25,),
 
               ElevatedButton.icon(
-                
                 onPressed: entrar, 
                 icon: const Icon(Icons.login),
                 label: Text(
@@ -155,10 +168,10 @@ class _LoginPageState extends State<LoginPage>{
                   fontWeight: FontWeight.bold,
                 ),
               )
-            )
-          ],
+            ) 
+          ]
         ),
-      )
+      ),
     );
   }
 }
