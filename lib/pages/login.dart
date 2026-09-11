@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './cadastro.dart';
-import '../services/dados_mock.dart';
+//import './cadastro.dart';
+//import '../services/dados_mock.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 210, 176),
+      backgroundColor: const Color.fromARGB(255, 237, 241, 243),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(24),
           child: Column(
@@ -43,30 +43,29 @@ class _LoginPageState extends State<LoginPage>{
             const SizedBox(height: 35,),
 
             Image.asset(
-              'assets/logo_nome.png',
-              height: 130,
+              'assets/Ikai.png',
+              height: 100,
               fit: BoxFit.contain,
               ),
 
               const SizedBox(height: 50,),
 
               Text(
-                'Bem-vindo',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.quicksand( 
+                'Sing in to your Account',
+                textAlign: TextAlign.left,
+                style: GoogleFonts.inter( 
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               
-              const SizedBox(height: 1,),
+              const SizedBox(height: 20,),
 
               Text(
-                'Entre com sua conta para acessar o Ikai',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.quicksand(
+                'Enter your email and password to login',
+                textAlign: TextAlign.left,
+                style: GoogleFonts.inter(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold
                 ),
               ),
 
@@ -82,19 +81,19 @@ class _LoginPageState extends State<LoginPage>{
                   decoration: InputDecoration(
                     label: Text(
                     'E-mail',
-                    style: GoogleFonts.quicksand(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   hint: Text (
-                    'Digite seu email',
-                      style: GoogleFonts.quicksand(
+                    'Exemplo@gmail.com',
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.bold,
                     ),
                   ),         
                   prefixIcon: Icon(Icons.email),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(90)
+                    borderRadius: BorderRadius.circular(10)
                   ), 
                 ),
               ),
@@ -113,19 +112,19 @@ class _LoginPageState extends State<LoginPage>{
                 decoration:  InputDecoration(
                   label: Text(
                     'Senha',
-                  style: GoogleFonts.quicksand(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
                   ),
                   ),
                   hint: Text(
-                    'Digite sua senha',
-                    style: GoogleFonts.quicksand(
+                    '',
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   prefixIcon: Icon(Icons.lock),    
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(90)
+                    borderRadius: BorderRadius.circular(10)
                   ),             
                   suffixIcon: IconButton(
                     onPressed: (){
@@ -150,8 +149,8 @@ class _LoginPageState extends State<LoginPage>{
                 onPressed: entrar, 
                 icon: const Icon(Icons.login),
                 label: Text(
-                  "Entrar",
-                style: GoogleFonts.quicksand(
+                  "Login",
+                style: GoogleFonts.inter(
                   fontWeight: FontWeight.bold,
                 ),
                 ),
@@ -159,12 +158,25 @@ class _LoginPageState extends State<LoginPage>{
 
               const SizedBox(height: 10,),
 
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: abrirCadastro,
                 icon: const Icon(Icons.person_add),
                 label: Text(
                   "Criar usuário",
-                style: GoogleFonts.quicksand(
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ),
+
+            const SizedBox(height: 10,),
+
+              ElevatedButton.icon(
+                onPressed: abrirCadastro,
+                icon: const Icon(Icons.person_add),
+                label: Text(
+                  "Continue with Google",
+                style: GoogleFonts.inter(
                   fontWeight: FontWeight.bold,
                 ),
               )
