@@ -18,6 +18,9 @@ class _LoginPageState extends State<LoginPage>{
   final TextEditingController senhaController = TextEditingController();
 
   bool esconderSenha = true;
+  bool _checked = false;
+
+
 
   void mostrarMensagem(String mensagem){
 
@@ -30,6 +33,8 @@ class _LoginPageState extends State<LoginPage>{
   void entrar(){
 
   }
+
+
 
   @override
   Widget build(BuildContext context){
@@ -145,47 +150,217 @@ class _LoginPageState extends State<LoginPage>{
 
               const SizedBox(height: 25,),
 
-              ElevatedButton.icon(
-                onPressed: entrar, 
-                icon: const Icon(Icons.login),
-                label: Text(
-                  "Login",
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
-                ),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _checked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _checked = value ?? false;
+                          });
+                        },
+                      ),
+                      Text(
+                        "Lembre de mim",
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,),
+                        ),
+                      ],
+                    ),
+
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {},
+                 child: Text( 
+                  
+                  "Esqueceu a senha?",
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue
+                    
+                  ),
+                )
               ),
+            ],
+          ),
+
+              const SizedBox(height: 25,),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: entrar,
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFCB5A34), // Cor terracota sólida
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    shadowColor: Colors.black38,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: const BorderSide(
+                        color: Color(0xFF4B86ED), // Borda azul
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                child: Text(
+                  'Log In',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
 
               const SizedBox(height: 10,),
 
-              ElevatedButton.icon(
-                onPressed: abrirCadastro,
-                icon: const Icon(Icons.person_add),
-                label: Text(
-                  "Criar usuário",
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
+              SizedBox(
+                width: double.infinity, // Ou um valor fixo, ex: 300
+                  child: Row(
+                    children: [
+                      Expanded(child: Divider(
+                        color: Colors.white,
+                        thickness: 3,
+                      )),
+                      Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text('Ou'),
+                    ),
+                    Expanded(child: Divider(
+                      color: Colors.white,
+                      thickness: 3,
+                    )),
+                    ],
+                  ),
                 ),
-              )
-            ),
+
+              const SizedBox(height: 10,),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: entrar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      elevation: 4,
+                      shadowColor: Colors.black38,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: const BorderSide(
+                          color: Color.fromARGB(255, 238, 210, 29), // Borda amarela
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/logo_google.png',
+                            height: 25,
+                          
+                          ),
+                        const SizedBox(width: 12),
+                        Text(
+                        'Continue with Google',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
 
             const SizedBox(height: 10,),
 
-              ElevatedButton.icon(
-                onPressed: abrirCadastro,
-                icon: const Icon(Icons.person_add),
-                label: Text(
-                  "Continue with Google",
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: entrar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      elevation: 4,
+                      shadowColor: Colors.black38,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: const BorderSide(
+                          color: Color.fromARGB(255, 238, 210, 29), // Borda amarela
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/logo_facebook.png',
+                            height: 25,
+                          
+                          ),
+                        const SizedBox(width: 12),
+                        Text(
+                        'Continue with Facebook',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+          
+          const SizedBox(height: 10,),
+          
+               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Don´t have an account?',
+                    textAlign: TextAlign.left,
+                    style: GoogleFonts.inter(
+                    fontSize: 14,
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                      '  Sign Up',
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               )
-            ) 
-          ]
+            ]
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
 
 
