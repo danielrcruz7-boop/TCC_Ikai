@@ -11,7 +11,6 @@ class LoginPage extends StatefulWidget{
 
   @override
   State<LoginPage> createState() => _LoginPageState();
-
 }
 
 class _LoginPageState extends State<LoginPage>{
@@ -21,12 +20,6 @@ class _LoginPageState extends State<LoginPage>{
 
   bool esconderSenha = true;
   bool _checked = false;
-
-
-
-  void mostrarMensagem(String mensagem){
-
-  }
 
   void abrirCadastro(){
     Navigator.push(

@@ -22,11 +22,37 @@ class _CadastroPageState extends State<CadastroPage>{
   bool esconderSenha = true;
   bool esconderConfirmaSenha = true;
 
-  void mostrarMensagem(mensagem){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(mensagem))
-    );
+// Função para exibir o aviso na tela via SnackBar
+void mostrarMensagem(String mensagem) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(mensagem),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 2),
+    ),
+  );
+}
+
+void verificar() {
+  print('--- Botão clicado ---');
+  // 1. Validação de campos vazios
+  if (nomeController.text.trim().isEmpty ||
+      emailController.text.trim().isEmpty ||
+      senhaController.text.trim().isEmpty ||
+      confirmaSenhaController.text.trim().isEmpty) {
+    mostrarMensagem('Preencha todos os campos corretamente');
+    return;
   }
+
+  // 2. Validação adicional: confirmação de senha
+  if (senhaController.text != confirmaSenhaController.text) {
+    mostrarMensagem('As senhas não coincidem');
+    return;
+  }
+
+  // Sucesso: prossiga com o cadastro
+}
+
 
   void cadastrar(){
 
@@ -405,7 +431,7 @@ class _CadastroPageState extends State<CadastroPage>{
                       ),
                       onPressed: abrirLogin,
                       child: Text(
-                      '  Sign Up',
+                      '  log in',
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
