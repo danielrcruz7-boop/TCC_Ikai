@@ -1,51 +1,61 @@
 import 'package:flutter/material.dart';
-//import './cadastro.dart';
-//import '../services/dados_mock.dart';
+import '../services/dados_mock.dart';
+import 'login.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
-class LoginPage extends StatefulWidget{
-  const LoginPage({super.key});
+class CadastroPage extends StatefulWidget{
+  const CadastroPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-
+  State<CadastroPage> createState() => _CadastroPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
+class _CadastroPageState extends State<CadastroPage>{
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController senhaController = TextEditingController();
+  final TextEditingController nomeController = TextEditingController();  
+  final TextEditingController emailController = TextEditingController();  
+  final TextEditingController senhaController = TextEditingController();  
+  final TextEditingController confirmaSenhaController = TextEditingController();
 
-  bool esconderSenha = true;
   bool _checked = false;
+  bool esconderSenha = true;
+  bool esconderConfirmaSenha = true;
 
+  void mostrarMensagem(mensagem){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensagem))
+    );
+  }
 
-
-  void mostrarMensagem(String mensagem){
+  void cadastrar(){
 
   }
 
-  void abrirCadastro(){
-    
+  void abrirLogin(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ),
+    );
   }
-
-  void entrar(){
-
-  }
-
-
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Cadastro"),
+        backgroundColor: const Color.fromARGB(255, 237, 241, 243),
+      ),
       backgroundColor: const Color.fromARGB(255, 237, 241, 243),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            const SizedBox(height: 35,),
+
+            const SizedBox(height: 15,),
 
             Image.asset(
               'assets/Ikai.png',
@@ -56,7 +66,7 @@ class _LoginPageState extends State<LoginPage>{
               const SizedBox(height: 50,),
 
               Text(
-                'Sing in to your Account',
+                'Create your Accont',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter( 
                   fontSize: 28,
@@ -67,7 +77,7 @@ class _LoginPageState extends State<LoginPage>{
               const SizedBox(height: 20,),
 
               Text(
-                'Enter your email and password to login',
+                'Enter your email and password to sign up',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
                   fontSize: 18,
@@ -75,6 +85,30 @@ class _LoginPageState extends State<LoginPage>{
               ),
 
               const SizedBox(height: 30,),
+
+              Center(
+                child:  SizedBox(
+                  width: 1200, 
+                  height: 50,    
+                child:  TextField(
+                  controller: nomeController,
+                  decoration: InputDecoration(
+                    label: Text(
+                    'Full name',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),      
+                  prefixIcon: Icon(Icons.person),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10)
+                  ), 
+                ),
+              ),
+            ),
+          ),
+
+              const SizedBox(height: 15,),
 
               Center(
                 child:  SizedBox(
@@ -116,7 +150,7 @@ class _LoginPageState extends State<LoginPage>{
                 obscureText: esconderSenha,
                 decoration:  InputDecoration(
                   label: Text(
-                    'Senha',
+                    'Password',
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
                   ),
@@ -148,13 +182,56 @@ class _LoginPageState extends State<LoginPage>{
             ),
           ),
 
-              const SizedBox(height: 25,),
+            const SizedBox(height: 15,),
+              
+              Center(
+                child:  SizedBox(
+                  width: 1200, 
+                  height: 50,   
+                child:  TextField(
+                controller: confirmaSenhaController,
+                obscureText: esconderSenha,
+                decoration:  InputDecoration(
+                  label: Text(
+                    'Confirm Password',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  ),
+                  hint: Text(
+                    '',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  prefixIcon: Icon(Icons.lock),    
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10)
+                  ),             
+                  suffixIcon: IconButton(
+                    onPressed: (){
+                      setState(() {
+                        esconderSenha = !esconderSenha;
+                      });
+                    }, 
+                    icon: Icon(
+                      esconderSenha 
+                      ? Icons.visibility
+                      : Icons.visibility_off
+                    ),
+                  )
+                ),
+              ),
+            ),
+          ),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              const SizedBox(height: 20,),
+
+              Center(
+                child:  Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
                       Checkbox(
                         value: _checked,
                         onChanged: (bool? value) {
@@ -164,40 +241,21 @@ class _LoginPageState extends State<LoginPage>{
                         },
                       ),
                       Text(
-                        "Lembre de mim",
+                        "Remember me",
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.bold,),
                         ),
                       ],
                     ),
-
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  onPressed: () {},
-                 child: Text( 
-                  
-                  "Esqueceu a senha?",
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue
-                    
-                  ),
-                )
-              ),
-            ],
-          ),
 
-              const SizedBox(height: 25,),
+              const SizedBox(height: 20,),
 
                 SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: entrar,
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFCB5A34), // Cor terracota sólida
                     foregroundColor: Colors.white,
@@ -212,7 +270,7 @@ class _LoginPageState extends State<LoginPage>{
                     ),
                   ),
                 child: Text(
-                  'Log In',
+                  'Sign up',
                     style: GoogleFonts.inter(
                       fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -221,7 +279,7 @@ class _LoginPageState extends State<LoginPage>{
                       ),
                     ),
 
-              const SizedBox(height: 10,),
+              const SizedBox(height: 20,),
 
               SizedBox(
                 width: double.infinity, // Ou um valor fixo, ex: 300
@@ -233,7 +291,7 @@ class _LoginPageState extends State<LoginPage>{
                       )),
                       Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('Ou'),
+                      child: Text('Or'),
                     ),
                     Expanded(child: Divider(
                       color: Colors.white,
@@ -243,13 +301,13 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                 ),
 
-              const SizedBox(height: 10,),
+              const SizedBox(height: 20,),
 
                 SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: entrar,
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -292,7 +350,7 @@ class _LoginPageState extends State<LoginPage>{
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: entrar,
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -327,13 +385,13 @@ class _LoginPageState extends State<LoginPage>{
                 ),
               ),
           
-          const SizedBox(height: 10,),
+          const SizedBox(height: 50,),
           
                Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Don´t have an account?',
+                    'Already have an account?',
                     textAlign: TextAlign.left,
                     style: GoogleFonts.inter(
                     fontSize: 14,
@@ -345,7 +403,7 @@ class _LoginPageState extends State<LoginPage>{
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      onPressed: () {},
+                      onPressed: abrirLogin,
                       child: Text(
                       '  Sign Up',
                       style: GoogleFonts.inter(

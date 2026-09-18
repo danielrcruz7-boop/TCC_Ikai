@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'pages/login.dart';
+import 'pages_login/cadastro.dart';
+import 'pages_login/login.dart';
+import 'pages_login/resgatar_senha.dart';
+import './pages_home/home.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,7 +15,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Sistema de Login',
+        title: 'Ikai',
         theme: ThemeData(
           colorSchemeSeed: Colors.blue,
           useMaterial3: true
