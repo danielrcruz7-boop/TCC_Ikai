@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import './home.dart';
+import './login.dart';
 
-class TemporarioPage extends StatefulWidget {
-  const TemporarioPage({super.key});
+class InicioPage extends StatefulWidget {
+  const InicioPage({super.key});
 
   @override
-  State<TemporarioPage> createState() => _TemporarioPageState();
+  State<InicioPage> createState() => _InicioPageState();
 }
 
-class _TemporarioPageState extends State<TemporarioPage> {
+class _InicioPageState extends State<InicioPage> {
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _TemporarioPageState extends State<TemporarioPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomePage(),
+          builder: (context) => const LoginPage(),
         ),
       );
 
@@ -42,8 +42,8 @@ class _TemporarioPageState extends State<TemporarioPage> {
     Column(
       children: [
         Image.asset(
-          'assets/logo_nome.png',
-          height: 250,
+          'assets/Ikai.png',
+          height: 350,
           fit: BoxFit.contain,
         ),
 

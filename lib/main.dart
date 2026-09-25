@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages_login/cadastro.dart';
 import 'pages_login/login.dart';
 import 'pages_login/resgatar_senha.dart';
+import './pages_login/tela_temporaria.dart';
 /*-------------------------------------*/
 import './pages_home/tela_temporaria.dart';
 import './pages_home/home.dart';
@@ -24,7 +25,7 @@ class MainApp extends StatelessWidget {
           colorSchemeSeed: Colors.blue,
           useMaterial3: true
         ),
-        home: LoginPage(),
+        home: InicioPage(),
       );
     
   }
