@@ -13,14 +13,35 @@ class LoginPage extends StatefulWidget{
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
+class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
-  bool esconderSenha = true;
   bool _checked = false;
+  bool esconderSenha = true;
 
+  void mostrarMensagem(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensagem),
+        backgroundColor: Colors.black,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+ void verificar() {
+  if (
+      emailController.text.trim().isEmpty ||
+      senhaController.text.trim().isEmpty ) {
+    mostrarMensagem('Preencha todos os campos corretamente');
+    return;
+      } else {
+        entrar();
+  }
+}
+  
   void abrirCadastro(){
     Navigator.push(
       context,
@@ -208,7 +229,7 @@ class _LoginPageState extends State<LoginPage>{
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: entrar,
+                    onPressed: verificar,
                     style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFCB5A34), // Cor terracota sólida
                     foregroundColor: Colors.white,
@@ -373,5 +394,3 @@ class _LoginPageState extends State<LoginPage>{
       );
     }
   }
-
-

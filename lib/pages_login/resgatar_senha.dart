@@ -12,6 +12,27 @@ class _ResgatarSenhaPageState extends State<ResgatarSenhaPage>{
 
   final TextEditingController emailController = TextEditingController();
 
+  void mostrarMensagem(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensagem),
+        backgroundColor: Colors.black,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+ void verificar() {
+  if (
+      emailController.text.trim().isEmpty ) {
+    mostrarMensagem('Preencha o campo corretamente');
+    return;
+      } else {
+//    entrar();
+  }
+}
+  
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -92,7 +113,7 @@ class _ResgatarSenhaPageState extends State<ResgatarSenhaPage>{
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: verificar,
                     style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFCB5A34), // Cor terracota sólida
                     foregroundColor: Colors.white,
@@ -121,5 +142,3 @@ class _ResgatarSenhaPageState extends State<ResgatarSenhaPage>{
       );
     }
   }
-
-
