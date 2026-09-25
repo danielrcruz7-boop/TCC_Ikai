@@ -25,7 +25,7 @@ class _CadastroPageState extends State<CadastroPage> {
       SnackBar(
         content: Text(mensagem),
         backgroundColor: Colors.black,
-        duration: const Duration(seconds: 1),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
