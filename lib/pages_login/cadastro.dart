@@ -70,27 +70,26 @@ class _CadastroPageState extends State<CadastroPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 15),
 
             Image.asset('assets/Ikai.png', height: 100, fit: BoxFit.contain),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
 
             Text(
               'Create your Accont',
               textAlign: TextAlign.left,
               style: GoogleFonts.inter(
-                fontSize: 28,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             Text(
               'Enter your email and password to sign up',
               textAlign: TextAlign.left,
-              style: GoogleFonts.inter(fontSize: 18),
+              style: GoogleFonts.inter(fontSize: 15),
             ),
 
             const SizedBox(height: 30),
@@ -243,7 +242,7 @@ class _CadastroPageState extends State<CadastroPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             SizedBox(
               width: double.infinity,
@@ -275,23 +274,27 @@ class _CadastroPageState extends State<CadastroPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             SizedBox(
               width: double.infinity, // Ou um valor fixo, ex: 300
               child: Row(
                 children: [
-                  Expanded(child: Divider(color: Colors.white, thickness: 3)),
+                  Expanded(child: Divider(
+                    color: Colors.white, 
+                    thickness: 1)),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text('Or'),
                   ),
-                  Expanded(child: Divider(color: Colors.white, thickness: 3)),
+                  Expanded(child: Divider(
+                    color: Colors.white,
+                    thickness: 1)),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             SizedBox(
               width: double.infinity,

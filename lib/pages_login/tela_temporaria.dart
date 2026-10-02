@@ -37,7 +37,7 @@ class _InicioPageState extends State<InicioPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch, 
           children: [  
 
-    const SizedBox(height: 15), 
+    const SizedBox(height: 5), 
 
     Column(
       children: [
@@ -47,19 +47,10 @@ class _InicioPageState extends State<InicioPage> {
           fit: BoxFit.contain,
         ),
 
-    const SizedBox(height: 100),
 
-    const SizedBox(
-      
-      width: 50,
-      height: 50,
-      child: CircularProgressIndicator(
-        strokeWidth: 5,
-        color: Colors.white,
-      ),
-    ),
-  ],
-)
+
+                ],
+              )
             ], 
           ), 
         ), 

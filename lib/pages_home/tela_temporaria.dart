@@ -37,29 +37,21 @@ class _TemporarioPageState extends State<TemporarioPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch, 
           children: [  
 
-    const SizedBox(height: 15), 
+
 
     Column(
       children: [
         Image.asset(
           'assets/logo_nome.png',
-          height: 250,
+          height: 225,
           fit: BoxFit.contain,
         ),
 
-    const SizedBox(height: 100),
 
-    const SizedBox(
-      
-      width: 50,
-      height: 50,
-      child: CircularProgressIndicator(
-        strokeWidth: 5,
-        color: Colors.white,
-      ),
-    ),
-  ],
-)
+
+
+                ],
+              )
             ], 
           ), 
         ), 

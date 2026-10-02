@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            const SizedBox(height: 35,),
+           const SizedBox(height: 25,),
 
             Image.asset(
               'assets/Ikai.png',
@@ -87,13 +87,13 @@ class _LoginPageState extends State<LoginPage> {
               fit: BoxFit.contain,
               ),
 
-              const SizedBox(height: 50,),
+              const SizedBox(height: 35,),
 
               Text(
                 'Sing in to your Account',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter( 
-                  fontSize: 28,
+                  fontSize: 35,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 'Enter your email and password to login',
                 textAlign: TextAlign.left,
                 style: GoogleFonts.inter(
-                  fontSize: 18,
+                  fontSize: 14,
                 ),
               ),
 
@@ -262,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Expanded(child: Divider(
                         color: Colors.white,
-                        thickness: 3,
+                        thickness: 1,
                       )),
                       Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
@@ -270,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Expanded(child: Divider(
                       color: Colors.white,
-                      thickness: 3,
+                      thickness: 1,
                     )),
                     ],
                   ),
@@ -360,7 +360,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
           
-          const SizedBox(height: 10,),
+          const SizedBox(height: 60,),
           
                Row(
                 mainAxisAlignment: MainAxisAlignment.center,
