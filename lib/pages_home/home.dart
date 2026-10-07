@@ -1,3 +1,4 @@
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,7 +50,9 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Cabeçalho
+                  // =========================
+                  // CABEÇALHO
+                  // =========================
                   Row(
                     children: [
                       Container(
@@ -98,7 +101,7 @@ class _HomePageState extends State<HomePage> {
 
                       const SizedBox(width: 8),
 
-                      // Botão de sustentabilidade
+                      // Botão sustentabilidade
                       SizedBox(
                         width: 42,
                         height: 42,
@@ -125,7 +128,7 @@ class _HomePageState extends State<HomePage> {
 
                       const SizedBox(width: 8),
 
-                      // Botão de notificações
+                      // Botão notificações
                       SizedBox(
                         width: 42,
                         height: 42,
@@ -149,21 +152,23 @@ class _HomePageState extends State<HomePage> {
                           child: const Icon(
                             Icons.notifications_none_rounded,
                             size: 28,
-        ),
-      ),
-    ),
-  ],
-),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
                   const SizedBox(height: 30),
 
-                  // Campo de pesquisa
+                  // =========================
+                  // CAMPO DE PESQUISA
+                  // =========================
                   TextField(
                     controller: pesquisaController,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(
                         Icons.search,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: Colors.black,
                       ),
                       hintText:
                           'Como você quer se cuidar hoje?',
@@ -188,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius:
                             BorderRadius.circular(19),
                         borderSide: const BorderSide(
-                          color: Color(0xFF4B7F5A),
+                          color: Color(0xFF6B7280),
                           width: 1.5,
                         ),
                       ),
@@ -196,19 +201,26 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   const SizedBox(height: 24),
+
+                  // =========================
+                  // CARD DE BEM-ESTAR
+                  // =========================
+                  const WellBeingCard(),
                 ],
               ),
             )
+
+          // =========================
+          // OUTRAS TELAS
+          // =========================
           : IndexedStack(
               index: indiceAtual - 1,
-              children: [
-                ComunidadePage(),
-                ProgressoPage(),
-                PerfilPage(),
-              ],
+              children: telas,
             ),
 
-      // Barra de navegação inferior
+      // =========================
+      // NAVEGAÇÃO INFERIOR
+      // =========================
       bottomNavigationBar: NavigationBar(
         height: 68,
         backgroundColor: Colors.amber,
@@ -250,3 +262,206 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// =====================================================
+// CARD DE BEM-ESTAR
+// =====================================================
+
+class WellBeingCard extends StatelessWidget {
+  const WellBeingCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        color: const Color(0xFFFBEFEA),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // =========================
+          // CÍRCULO DE PROGRESSO
+          // =========================
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 100,
+                height: 150,
+                child: CustomPaint(
+                  painter: CircularProgressPainter(
+                    percent: 84 / 100,
+                    progressColor:
+                        const Color(0xFFCB5A34),
+                    backgroundColor:
+                        const Color(0xFFE8D5B0),
+                  ),
+                ),
+              ),
+
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '84%',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFCB5A34),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'GERAL',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF7F8C8D),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(width: 24),
+
+          // =========================
+          // TEXTOS
+          // =========================
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                // Etiqueta
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEAF5EF),
+                    borderRadius:
+                        BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    'FOCO NO PRESENTE',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF4C8D67),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Título
+                Text(
+                  'Seu bem-estar está florescendo hoje.',
+                  style: GoogleFonts.inter(
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    height: 1.3,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Subtítulo
+                Text(
+                  'Que tal praticar 10 minutos de respiração para cultivar calma?',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF7F8C8D),
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),      
+    );
+  }  
+}
+
+@override
+
+
+// =====================================================
+// CÍRCULO DE PROGRESSO
+// =====================================================
+
+class CircularProgressPainter extends CustomPainter {
+  final double percent;
+  final Color backgroundColor;
+  final Color progressColor;
+  final double strokeWidth;
+
+  CircularProgressPainter({
+    required this.percent,
+    required this.backgroundColor,
+    required this.progressColor,
+    this.strokeWidth = 10,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(
+      size.width / 2,
+      size.height / 2,
+    );
+
+    final radius =
+        (size.width - strokeWidth) / 2;
+
+    // Fundo do círculo
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawCircle(
+      center,
+      radius,
+      backgroundPaint,
+    );
+
+    // Progresso
+    final progressPaint = Paint()
+      ..color = progressColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
+
+    const startAngle = -pi / 2;
+
+    final sweepAngle =
+        2 * pi * percent;
+
+    canvas.drawArc(
+      Rect.fromCircle(
+        center: center,
+        radius: radius,
+      ),
+      startAngle,
+      sweepAngle,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(
+    CustomPainter oldDelegate,
+  ) {
+    return true;
+  }
+}
+
