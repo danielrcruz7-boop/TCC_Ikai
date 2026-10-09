@@ -206,6 +206,20 @@ class _HomePageState extends State<HomePage> {
                   // CARD DE BEM-ESTAR
                   // =========================
                   const WellBeingCard(),
+
+                  // =========================
+                  // PRÁTICAS RÁPIDAS
+                  // =========================
+                  const SizedBox(height: 24),
+
+                  const QuickPracticesSection(),
+
+                  // =========================
+                  // SUAS ATIVIDADES (NOVO)
+                  // =========================
+                  const SizedBox(height: 24),
+
+                  const ActivitiesSection(),
                 ],
               ),
             )
@@ -386,13 +400,408 @@ class WellBeingCard extends StatelessWidget {
             ),
           ),
         ],
-      ),      
+      ),
     );
-  }  
+  }
 }
 
-@override
+// =====================================================
+// PRÁTICAS RÁPIDAS
+// =====================================================
 
+/// Dados de cada prática do carrossel.
+/// [imagePath] é opcional: enquanto for null (ou o arquivo não existir),
+/// o cartão mostra um ícone sobre fundo circular colorido.
+class QuickPractice {
+  final String title;
+  final IconData icon;
+  final Color backgroundColor;
+  final Color iconColor;
+  final String? imagePath;
+  final VoidCallback? onTap;
+
+  const QuickPractice({
+    required this.title,
+    required this.icon,
+    required this.backgroundColor,
+    required this.iconColor,
+    this.imagePath,
+    this.onTap,
+  });
+}
+
+class QuickPracticesSection extends StatelessWidget {
+  const QuickPracticesSection({super.key});
+
+  // Altura da área do carrossel (cartão de 118 + folga para a sombra)
+  static const double _carouselHeight = 124;
+
+  // TODO: quando existirem as páginas de cada prática, preencha o onTap.
+  // Para usar fotos, informe imagePath, por exemplo:
+  // imagePath: 'assets/praticas/meditacao.png'
+  static const List<QuickPractice> _praticas = [
+    QuickPractice(
+      title: 'Meditação',
+      icon: Icons.self_improvement,
+      backgroundColor: Color(0xFFEAF5EF),
+      iconColor: Color(0xFF4C8D67),
+    ),
+    QuickPractice(
+      title: 'Exercícios',
+      icon: Icons.fitness_center,
+      backgroundColor: Color(0xFFFBEFEA),
+      iconColor: Color(0xFFCB5A34),
+    ),
+    QuickPractice(
+      title: 'Nutrição',
+      icon: Icons.restaurant_outlined,
+      backgroundColor: Color(0xFFF3F7E6),
+      iconColor: Color(0xFF6E8B2F),
+    ),
+    QuickPractice(
+      title: 'Sono',
+      icon: Icons.bedtime_outlined,
+      backgroundColor: Color(0xFFEDF0F7),
+      iconColor: Color(0xFF5A6A99),
+    ),
+    QuickPractice(
+      title: 'Respiração',
+      icon: Icons.air,
+      backgroundColor: Color(0xFFE8F4F6),
+      iconColor: Color(0xFF3F8A99),
+    ),
+    QuickPractice(
+      title: 'Hidratação',
+      icon: Icons.water_drop_outlined,
+      backgroundColor: Color(0xFFE9F1FB),
+      iconColor: Color(0xFF4A7FB5),
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Cabeçalho da seção
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Práticas Rápidas',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF243044),
+              ),
+            ),
+            TextButton(
+              // TODO: navegar para o catálogo completo quando existir.
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFD84925),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 4,
+                ),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Ver tudo',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFD84925),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 10),
+
+        // Carrossel horizontal
+        SizedBox(
+          height: _carouselHeight,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            // Permite que os cartões e sombras apareçam até a borda
+            // da tela durante a rolagem, sem corte no padding da Home.
+            clipBehavior: Clip.none,
+            physics: const BouncingScrollPhysics(),
+            itemCount: _praticas.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: index == _praticas.length - 1 ? 0 : 12,
+                  bottom: 4,
+                ),
+                child: QuickPracticeCard(pratica: _praticas[index]),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class QuickPracticeCard extends StatelessWidget {
+  final QuickPractice pratica;
+
+  const QuickPracticeCard({super.key, required this.pratica});
+
+  static const double _width = 96;
+  static const double _height = 118;
+  static const double _imageSize = 46;
+  static const double _radius = 16;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: _width,
+      height: _height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(_radius),
+        border: Border.all(color: const Color(0xFFE7EDF1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(_radius),
+          onTap: pratica.onTap ?? () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 10,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildCircularImage(),
+                const SizedBox(height: 8),
+                Text(
+                  pratica.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF243044),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCircularImage() {
+    final fallback = Container(
+      width: _imageSize,
+      height: _imageSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: pratica.backgroundColor,
+      ),
+      child: Icon(
+        pratica.icon,
+        size: 24,
+        color: pratica.iconColor,
+      ),
+    );
+
+    final path = pratica.imagePath;
+    if (path == null) return fallback;
+
+    return ClipOval(
+      child: Image.asset(
+        path,
+        width: _imageSize,
+        height: _imageSize,
+        fit: BoxFit.cover,
+        // Se o arquivo não existir, volta para o ícone sem quebrar o app.
+        errorBuilder: (context, error, stackTrace) => fallback,
+      ),
+    );
+  }
+}
+
+// =====================================================
+// SUAS ATIVIDADES (NOVO)
+// =====================================================
+
+/// Dados de cada atividade. O progresso é um valor entre 0 e 1;
+/// a porcentagem exibida é derivada dele para evitar inconsistências.
+class ActivityData {
+  final String title;
+  final String subtitle;
+  final double progress;
+  final Color color;
+
+  const ActivityData({
+    required this.title,
+    required this.subtitle,
+    required this.progress,
+    required this.color,
+  });
+}
+
+class ActivitiesSection extends StatelessWidget {
+  const ActivitiesSection({super.key});
+
+  // Dados demonstrativos estáticos.
+  static const List<ActivityData> _atividades = [
+    ActivityData(
+      title: 'Mente Consciente',
+      subtitle: '25 min',
+      progress: 0.80,
+      color: Color(0xFF4B7F5A), // verde
+    ),
+    ActivityData(
+      title: 'Movimento Diário',
+      subtitle: '380 kcal',
+      progress: 0.65,
+      color: Color(0xFFCC512C), // laranja queimado
+    ),
+    ActivityData(
+      title: 'Qualidade do Sono',
+      subtitle: '7.8 horas',
+      progress: 0.90,
+      color: Color(0xFF4F80ED), // azul
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Suas Atividades',
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF243044),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        for (int i = 0; i < _atividades.length; i++) ...[
+          ActivityProgressCard(atividade: _atividades[i]),
+          if (i != _atividades.length - 1) const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class ActivityProgressCard extends StatelessWidget {
+  final ActivityData atividade;
+
+  const ActivityProgressCard({super.key, required this.atividade});
+
+  static const Color _textoPrincipal = Color(0xFF243044);
+  static const Color _textoSecundario = Color(0xFF7B8494);
+  static const Color _fundoBarra = Color(0xFFEAF0F1);
+
+  @override
+  Widget build(BuildContext context) {
+    final porcentagem = (atividade.progress * 100).round();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 10,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE7EDF1)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Linha superior: nome (esquerda) e porcentagem (direita)
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  atividade.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _textoPrincipal,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '$porcentagem%',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: _textoPrincipal,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // Linha inferior: informação complementar + barra de progresso
+          Row(
+            children: [
+              SizedBox(
+                width: 64,
+                child: Text(
+                  atividade.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: _textoSecundario,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: atividade.progress,
+                    minHeight: 6,
+                    backgroundColor: _fundoBarra,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      atividade.color,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 // =====================================================
 // CÍRCULO DE PROGRESSO
@@ -464,4 +873,3 @@ class CircularProgressPainter extends CustomPainter {
     return true;
   }
 }
-
