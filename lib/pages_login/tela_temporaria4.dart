@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import './login.dart';
+import 'package:ikai/pages_home/home.dart';
 
-class InicioPage extends StatefulWidget {
-  const InicioPage({super.key});
+class InicioPage4 extends StatefulWidget {
+  const InicioPage4({super.key});
 
   @override
-  State<InicioPage> createState() => _InicioPageState();
+  State<InicioPage4> createState() => _InicioPage4State();
 }
 
-class _InicioPageState extends State<InicioPage> {
+class _InicioPage4State extends State<InicioPage4> {
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _InicioPageState extends State<InicioPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginPage(),
+          builder: (context) => const HomePage(),
         ),
       );
 

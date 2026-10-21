@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import './secao.dart';
 
 class ObjetivosPage extends StatefulWidget {
   const ObjetivosPage({super.key});
@@ -36,6 +37,15 @@ class _ObjetivosPageState extends State<ObjetivosPage> {
       objetivoSelecionado = objetivo;
     });
   }
+    void abrirsecao(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SecaoPage(),
+      ),
+    );
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -184,16 +194,7 @@ class _ObjetivosPageState extends State<ObjetivosPage> {
                 height: 54,
 
                 child: ElevatedButton(
-                  onPressed: objetivoSelecionado == null
-                      ? null
-                      : () {
-                          debugPrint(
-                            'Objetivo escolhido: '
-                            '$objetivoSelecionado',
-                          );
-
-                          // Navegue para a próxima tela aqui.
-                        },
+                  onPressed: abrirsecao,
 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: verde,

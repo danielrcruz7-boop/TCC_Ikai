@@ -5,14 +5,17 @@ import 'package:device_preview/device_preview.dart';
 import 'pages_login/cadastro.dart';
 import 'pages_login/login.dart';
 import 'pages_login/resgatar_senha.dart';
-import './pages_login/tela_temporaria.dart';
+import './pages_login/tela_temporaria4.dart';
 /*-------------------------------------*/
-import './pages_home/tela_temporaria.dart';
+import './pages_home/tela_temporaria3.dart';
 import './pages_home/home.dart';
 /*--------------------------------------*/
 import './pages_configurar/objetivo.dart';
 import './pages_configurar/limite.dart';
 import './pages_configurar/secao.dart';
+import './pages_configurar/tela_temporaria1.dart';
+import './pages_configurar/tela_temporaria2.dart';
+
 
 
 void main() {
@@ -38,7 +41,7 @@ class MainApp extends StatelessWidget {
           colorSchemeSeed: Colors.blue,
           useMaterial3: true
         ),
-        home: InicioPage(),
+        home: InicioPage1(),
       );
     
   }
