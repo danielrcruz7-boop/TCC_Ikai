@@ -9,6 +9,10 @@ import './pages_login/tela_temporaria.dart';
 /*-------------------------------------*/
 import './pages_home/tela_temporaria.dart';
 import './pages_home/home.dart';
+/*--------------------------------------*/
+import './pages_configurar/objetivo.dart';
+import './pages_configurar/limite.dart';
+import './pages_configurar/secao.dart';
 
 
 void main() {
