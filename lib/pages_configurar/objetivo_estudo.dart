@@ -14,14 +14,14 @@ const List<Categoria> _materias = [
     icone: Icons.menu_book_outlined,
   ),
   Categoria(
-    id: 'estudar_geografia',
-    titulo: 'Geografia',
-    icone: Icons.public,
+    id: 'estudar_ingles',
+    titulo: 'Inglês',
+    icone: Icons.translate_outlined,
   ),
   Categoria(
-    id: 'estudar_fisica',
-    titulo: 'Física',
-    icone: Icons.science_outlined,
+    id: 'estudar_artes',
+    titulo: 'Artes',
+    icone: Icons.palette_outlined,
   ),
   Categoria(
     id: 'estudar_historia',
@@ -29,9 +29,39 @@ const List<Categoria> _materias = [
     icone: Icons.account_balance_outlined,
   ),
   Categoria(
-    id: 'estudar_arte',
-    titulo: 'Arte',
-    icone: Icons.palette_outlined,
+    id: 'estudar_geografia',
+    titulo: 'Geografia',
+    icone: Icons.public_outlined,
+  ),
+    Categoria(
+    id: 'estudar_filosofia',
+    titulo: 'Filosofia',
+    icone: Icons.psychology_outlined,
+  ),
+    Categoria(
+    id: 'estudar_sociolofia',
+    titulo: 'Sociologia',
+    icone: Icons.groups_outlined,
+  ),
+    Categoria(
+    id: 'estudar_ef',
+    titulo: 'Educação Física',
+    icone: Icons.fitness_center_outlined,
+  ),
+    Categoria(
+    id: 'estudar_biologia',
+    titulo: 'Biologia',
+    icone: Icons.eco_outlined,
+  ),
+    Categoria(
+    id: 'estudar_fisica',
+    titulo: 'Física',
+    icone: Icons.bolt_outlined,
+  ),
+    Categoria(
+    id: 'estudar_quimica',
+    titulo: 'Química',
+    icone: Icons.science_outlined,
   ),
 ];
 

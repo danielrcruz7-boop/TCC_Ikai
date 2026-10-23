@@ -9,6 +9,31 @@ const List<Categoria> _categoriasConteudo = [
     titulo: 'Científico',
     icone: Icons.science_outlined,
   ),
+    Categoria(
+    id: 'ver_cultura',
+    titulo: 'Cultura',
+    icone: Icons.museum_outlined,
+  ),
+    Categoria(
+    id: 'ver_jogos',
+    titulo: 'Jogos',
+    icone: Icons.sports_esports_outlined,
+  ),
+    Categoria(
+    id: 'ver_noticia',
+    titulo: 'Notícias',
+    icone: Icons.newspaper_outlined,
+  ),
+    Categoria(
+    id: 'ver_esporte',
+    titulo: 'Esporte',
+    icone: Icons.sports_soccer_outlined,
+  ),
+      Categoria(
+    id: 'ver_curiosidades',
+    titulo: 'Curiosidades',
+    icone: Icons.lightbulb_outline,
+  ),
 ];
 
 final Objetivo objetivoConteudo = Objetivo(
