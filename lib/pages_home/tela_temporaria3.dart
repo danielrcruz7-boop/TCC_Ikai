@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importante: necessário para o SystemNavigator.pop()
 import './home.dart';
-import '../pages_configurar/objetivo.dart';
+import '../pages_configurar/controle_objetivo.dart';
 
 class TemporarioPage extends StatefulWidget {
   const TemporarioPage({super.key});
@@ -74,7 +74,7 @@ class _TemporarioPageState extends State<TemporarioPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const ObjetivosPage(),
+          builder: (context) => const FluxoObjetivosPage(),
         ),
       );
     });

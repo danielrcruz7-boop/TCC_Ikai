@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ikai/pages_home/home.dart';
 import 'resgatar_senha.dart';
 import 'cadastro.dart';
-import './tela_temporaria4.dart';
-//import '../services/dados_mock.dart';
+import '../pages_configurar/tela_temporaria1.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -63,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   void entrar(){
     Navigator.push(context,
     MaterialPageRoute(
-      builder: (context) => const InicioPage4()
+      builder: (context) => const InicioPage1()
       ),
     );
   }

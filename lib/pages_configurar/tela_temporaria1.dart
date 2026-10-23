@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './objetivo.dart';
+import './controle_objetivo.dart';
 
 class InicioPage1 extends StatefulWidget {
   const InicioPage1({super.key});
@@ -21,7 +21,7 @@ class _InicioPage1State extends State<InicioPage1> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const ObjetivosPage(),
+          builder: (context) => const FluxoObjetivosPage(),
         ),
       );
 

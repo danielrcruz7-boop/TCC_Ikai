@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages_login/login.dart';
+import '../pages_home/home.dart';
 
 class InicioPage2 extends StatefulWidget {
   const InicioPage2({super.key});
@@ -13,6 +13,7 @@ class _InicioPage2State extends State<InicioPage2> {
   @override
   void initState() {
     super.initState();
+    
 
     Future.delayed(const Duration(seconds: 5), () {
 
@@ -21,7 +22,7 @@ class _InicioPage2State extends State<InicioPage2> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginPage(),
+          builder: (context) => const HomePage(),
         ),
       );
 
