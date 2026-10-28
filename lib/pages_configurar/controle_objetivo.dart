@@ -935,16 +935,14 @@ class TelaBloqueio extends StatelessWidget {
                   height: 52,
                   child: ElevatedButton(
                     onPressed: () {
-  ControleObjetivos.instance.reiniciarSessao();
-  // Depois que o Navigator volta à árvore, limpa toda a pilha
-  // e abre a tela de configuração (etapa 1).
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const FluxoObjetivosPage()),
-      (route) => false,
-    );
-  });
-},
+                        ControleObjetivos.instance.reiniciarSessao();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                            navigatorKey.currentState?.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const FluxoObjetivosPage()),
+                        (route) => false,
+                    );
+                });
+            },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _laranja,
                       foregroundColor: Colors.white,

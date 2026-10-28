@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import './botoes_home/notificacao.dart';
+
 import './comunidade.dart';
 import './perfil.dart';
 import './progresso.dart';
@@ -33,6 +35,17 @@ class _HomePageState extends State<HomePage> {
     pesquisaController.dispose();
     super.dispose();
   }
+
+
+    void notificacoes(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const notificacaoPage(),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                         width: 42,
                         height: 42,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: notificacoes,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor:
