@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import './botoes_home/notificacao.dart';
+import 'notificacao.dart';
 
-import './comunidade.dart';
-import './perfil.dart';
-import './progresso.dart';
-import './explorar.dart';
+import '../comunidade.dart';
+import '../perfil/perfil.dart';
+import '../progresso.dart';
+import '../explorar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
       // =========================
       bottomNavigationBar: NavigationBar(
         height: 68,
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.deepPurple.shade50,
         indicatorColor: Colors.deepPurple.shade50,
         selectedIndex: indiceAtual,
         onDestinationSelected: (novoIndice) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import './botoes_perfil/configuracao.dart';
+import 'configuracao.dart';
 
 /// Dados exibidos no Perfil.
 class DadosPerfil {
@@ -13,16 +13,6 @@ class DadosPerfil {
   });
 }
 
-/// Guarda em MEMÓRIA os dados editados pelo usuário.
-///
-/// Por que existe: a Home troca entre o conteúdo da aba "Home" e o
-/// `IndexedStack`, e isso descarta o estado do `PerfilPage` ao voltar
-/// para a primeira aba. Guardar aqui evita perder o nome/e-mail editado
-/// ao trocar de aba.
-///
-/// ATENÇÃO: não há persistência. Ao fechar o aplicativo os dados voltam
-/// aos valores originais. Substitua por armazenamento permanente
-/// (ex.: shared_preferences) ou pelo sistema de contas quando existir.
 class PerfilSessao {
   PerfilSessao._();
 

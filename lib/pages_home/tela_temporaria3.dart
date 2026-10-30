@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importante: necessário para o SystemNavigator.pop()
-import './home.dart';
+import 'home/home.dart';
 import '../pages_configurar/controle_objetivo.dart';
 
 class TemporarioPage extends StatefulWidget {
@@ -46,7 +46,7 @@ class _TemporarioPageState extends State<TemporarioPage> {
               onPressed: () {
                 SystemNavigator.pop(); // Fecha o app
               },
-              child: const Text('Não'),
+              child: const Text('Não, sair'),
             ),
             
             // Botão SIM: Continua para a próxima tela
@@ -58,7 +58,7 @@ class _TemporarioPageState extends State<TemporarioPage> {
                 // 2. Continua o carregamento e depois vai para a HomePage
                 _continuarCarregamento();
               },
-              child: const Text('Sim'),
+              child: const Text('Sim, entrar'),
             ),
           ],
         );

@@ -46,27 +46,27 @@ class _InicioPage1State extends State<InicioPage1> {
               color: Color(0xFF68756B),
             ),
           ),
-          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFCB5A34),
-                foregroundColor: Colors.white,
+                foregroundColor: const Color(0xFF253D2D),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Sim, continuar'),
+              child: const Text('sim, continuar'),
             ),
             OutlinedButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF253D2D),
+                backgroundColor: const Color(0xFFCB5A34),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

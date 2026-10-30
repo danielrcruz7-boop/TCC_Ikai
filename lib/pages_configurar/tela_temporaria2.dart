@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages_home/home.dart';
+import '../pages_home/home/home.dart';
 
 class InicioPage2 extends StatefulWidget {
   const InicioPage2({super.key});
