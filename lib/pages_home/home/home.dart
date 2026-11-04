@@ -3,7 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'notificacao.dart';
+import './notificacao.dart';
+import './vizualizar.dart';
 
 import '../comunidade.dart';
 import '../perfil/perfil.dart';
@@ -36,7 +37,14 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-
+void vizualizar() {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const PraticasPage(),
+    ),
+  );
+}
     void notificacoes(){
     Navigator.push(
       context,
@@ -225,7 +233,9 @@ class _HomePageState extends State<HomePage> {
                   // =========================
                   const SizedBox(height: 24),
 
-                  const QuickPracticesSection(),
+                  QuickPracticesSection(
+                    vizualizar: vizualizar,
+                  ),
 
                   // =========================
                   // SUAS ATIVIDADES (NOVO)
@@ -444,7 +454,12 @@ class QuickPractice {
 }
 
 class QuickPracticesSection extends StatelessWidget {
-  const QuickPracticesSection({super.key});
+  final VoidCallback vizualizar;
+
+  const QuickPracticesSection({
+    super.key,
+    required this.vizualizar,
+  });
 
   // Altura da área do carrossel (cartão de 118 + folga para a sombra)
   static const double _carouselHeight = 124;
@@ -510,8 +525,7 @@ class QuickPracticesSection extends StatelessWidget {
               ),
             ),
             TextButton(
-              // TODO: navegar para o catálogo completo quando existir.
-              onPressed: () {},
+              onPressed: vizualizar,
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFFD84925),
                 padding: const EdgeInsets.symmetric(

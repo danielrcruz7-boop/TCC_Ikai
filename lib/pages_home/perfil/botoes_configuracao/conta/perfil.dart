@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ikai/pages_home/perfil/perfil.dart';
 
-class DadosPessoaisScreen extends StatelessWidget {
-  const DadosPessoaisScreen({super.key});
+class perfilPage extends StatelessWidget {
+  const perfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {

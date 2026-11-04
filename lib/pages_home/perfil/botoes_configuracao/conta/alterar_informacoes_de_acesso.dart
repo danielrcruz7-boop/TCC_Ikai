@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DadosPessoaisScreen extends StatelessWidget {
-  const DadosPessoaisScreen({super.key});
+class DadosPessoaisPage extends StatelessWidget {
+  const DadosPessoaisPage({super.key});
 
   @override
   Widget build(BuildContext context) {

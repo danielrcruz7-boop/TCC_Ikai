@@ -35,15 +35,20 @@ import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/ajuda_e_supo
 import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/central_de_ajuda.dart';
 import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/sobre_ikai.dart';
 
-import './pages_home/perfil/botoes_configuracao/aparencia/aparecia.dart';
-
 import './pages_home/perfil/botoes_configuracao/conta_e_sessao/sair_da_conta.dart';
 import './pages_home/perfil/botoes_configuracao/conta_e_sessao/excluir_conta.dart';
+
+import './pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart';
 
 import './pages_home/perfil/botoes_configuracao/notificao/notificacao.dart';
 
 import './pages_home/perfil/botoes_configuracao/privacidade_e_segurança/privacidade.dart';
 import './pages_home/perfil/botoes_configuracao/privacidade_e_segurança/termos_de_uso.dart';
+
+/*--------------------------------------*/
+
+// Aparência global (tema claro/escuro, alto contraste e tamanho do texto).
+import './tema.dart' hide AparenciaController, AparenciaTemas;
 
 /*--------------------------------------*/
 
@@ -61,18 +66,32 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return MaterialApp(
-        locale: DevicePreview.locale(context),
-        navigatorKey: navigatorKey,
-          builder: (context, child) => SessaoGuard(child: child!),
-        debugShowCheckedModeBanner: false,
-        title: 'Ikai',
-        theme: ThemeData(
-          colorSchemeSeed: Colors.blue,
-          useMaterial3: true
-        ),     
-        home: InicioPage4(),
-      );
-    
+    // Reconstrói o MaterialApp sempre que o usuário muda a aparência.
+    return ListenableBuilder(
+      listenable: AparenciaController.instancia,
+      builder: (context, _) {
+        final aparencia = AparenciaController.instancia;
+
+        return MaterialApp(
+          locale: DevicePreview.locale(context),
+          navigatorKey: navigatorKey,
+          builder: (context, child) =>
+              AparenciaController.aplicarEscalaDeTexto(
+            context,
+            SessaoGuard(child: child!),
+          ),
+          debugShowCheckedModeBanner: false,
+          title: 'Ikai',
+          theme: AparenciaTemas.claro(
+            altoContraste: aparencia.altoContraste,
+          ),
+          darkTheme: AparenciaTemas.escuro(
+            altoContraste: aparencia.altoContraste,
+          ),
+          themeMode: aparencia.tema,
+          home: InicioPage4(),
+        );
+      },
+    );
   }
 }

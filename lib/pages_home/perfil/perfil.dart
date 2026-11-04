@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'configuracao.dart';
+import 'package:ikai/pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart';
+import '';
+import './configuracao.dart';
 
 /// Dados exibidos no Perfil.
 class DadosPerfil {
@@ -13,6 +15,16 @@ class DadosPerfil {
   });
 }
 
+/// Guarda em MEMÓRIA os dados editados pelo usuário.
+///
+/// Por que existe: a Home troca entre o conteúdo da aba "Home" e o
+/// `IndexedStack`, e isso descarta o estado do `PerfilPage` ao voltar
+/// para a primeira aba. Guardar aqui evita perder o nome/e-mail editado
+/// ao trocar de aba.
+///
+/// ATENÇÃO: não há persistência. Ao fechar o aplicativo os dados voltam
+/// aos valores originais. Substitua por armazenamento permanente
+/// (ex.: shared_preferences) ou pelo sistema de contas quando existir.
 class PerfilSessao {
   PerfilSessao._();
 
@@ -35,11 +47,8 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
-  static const Color _fundo = Color(0xFFFDFBF7);
-  static const Color _laranja = Color(0xFFCB5A34);
-  static const Color _texto = Color(0xFF243044);
-  static const Color _verde = Color(0xFF4B7F5A);
-  static const Color _verdeClaro = Color(0xFFEAF2EC);
+  YkaiCores get c => context.cores;
+
 
   void _mensagem(String texto) {
     ScaffoldMessenger.of(context)
@@ -98,9 +107,9 @@ class _PerfilPageState extends State<PerfilPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text(
+            child: Text(
               'Sair',
-              style: TextStyle(color: _laranja),
+              style: TextStyle(color: c.laranja),
             ),
           ),
         ],
@@ -120,7 +129,7 @@ class _PerfilPageState extends State<PerfilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _fundo,
+      backgroundColor: c.fundo,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -142,7 +151,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         style: GoogleFonts.inter(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: _texto,
+                          color: c.texto,
                         ),
                       ),
                       SizedBox(
@@ -153,8 +162,8 @@ class _PerfilPageState extends State<PerfilPage> {
                           child: ElevatedButton(
                             onPressed: () => configuracao(context),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _verdeClaro,
-                              foregroundColor: _verde,
+                              backgroundColor: c.verdeClaro,
+                              foregroundColor: c.verde,
                               elevation: 0,
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
@@ -174,14 +183,14 @@ class _PerfilPageState extends State<PerfilPage> {
                   const SizedBox(height: 36),
 
                   // Avatar
-                  const Center(
+                  Center(
                     child: CircleAvatar(
                       radius: 52,
-                      backgroundColor: Color(0xFFF6E5DC),
+                      backgroundColor: c.laranjaClaro,
                       child: Icon(
                         Icons.person_outline,
                         size: 56,
-                        color: _laranja,
+                        color: c.laranja,
                       ),
                     ),
                   ),
@@ -198,7 +207,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       style: GoogleFonts.inter(
                         fontSize: 21,
                         fontWeight: FontWeight.bold,
-                        color: _texto,
+                        color: c.texto,
                       ),
                     ),
                   ),
@@ -214,7 +223,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: c.textoSecundario,
                       ),
                     ),
                   ),
@@ -253,9 +262,9 @@ class _PerfilPageState extends State<PerfilPage> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: _laranja,
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: _laranja),
+                      foregroundColor: c.laranja,
+                      backgroundColor: c.cartao,
+                      side: BorderSide(color: c.laranja),
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -291,14 +300,13 @@ class _CartaoNavegacao extends StatelessWidget {
     required this.aoTocar,
   });
 
-  static const Color _laranja = Color(0xFFCB5A34);
-  static const Color _texto = Color(0xFF243044);
-  static const Color _borda = Color(0xFFF0ECE6);
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Material(
-      color: Colors.white,
+      color: c.cartao,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -310,7 +318,7 @@ class _CartaoNavegacao extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _borda),
+            border: Border.all(color: c.borda),
           ),
           child: Row(
             children: [
@@ -318,10 +326,10 @@ class _CartaoNavegacao extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFBEFEA),
+                  color: c.laranjaClaro,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icone, color: _laranja, size: 23),
+                child: Icon(icone, color: c.laranja, size: 23),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -333,7 +341,7 @@ class _CartaoNavegacao extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: _texto,
+                        color: c.texto,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -341,13 +349,13 @@ class _CartaoNavegacao extends StatelessWidget {
                       descricao,
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: c.textoSecundario,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey),
+              Icon(Icons.chevron_right, color: c.textoSuave),
             ],
           ),
         ),
@@ -374,10 +382,8 @@ class _EditarPerfilPage extends StatefulWidget {
 }
 
 class _EditarPerfilPageState extends State<_EditarPerfilPage> {
-  static const Color _fundo = Color(0xFFFDFBF7);
-  static const Color _laranja = Color(0xFFCB5A34);
-  static const Color _texto = Color(0xFF243044);
-  static const Color _borda = Color(0xFFF0ECE6);
+  YkaiCores get c => context.cores;
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -433,11 +439,11 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
     return InputDecoration(
       labelText: rotulo,
       labelStyle: GoogleFonts.inter(fontSize: 14),
-      prefixIcon: Icon(icone, color: _laranja),
+      prefixIcon: Icon(icone, color: c.laranja),
       filled: true,
-      fillColor: Colors.white,
-      enabledBorder: borda(_borda),
-      focusedBorder: borda(_laranja, 1.5),
+      fillColor: c.cartao,
+      enabledBorder: borda(c.borda),
+      focusedBorder: borda(c.laranja, 1.5),
       errorBorder: borda(Colors.red.shade400),
       focusedErrorBorder: borda(Colors.red.shade400, 1.5),
     );
@@ -446,10 +452,10 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _fundo,
+      backgroundColor: c.fundo,
       appBar: AppBar(
-        backgroundColor: _fundo,
-        foregroundColor: _texto,
+        backgroundColor: c.fundo,
+        foregroundColor: c.texto,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -468,15 +474,15 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEAF2EC),
+                    color: c.verdeClaro,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.info_outline,
-                        color: Color(0xFF4B7F5A),
+                        color: c.verde,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
@@ -488,7 +494,7 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             height: 1.4,
-                            color: _texto,
+                            color: c.texto,
                           ),
                         ),
                       ),
@@ -502,7 +508,7 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                   textCapitalization: TextCapitalization.words,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validarNome,
-                  style: GoogleFonts.inter(fontSize: 15, color: _texto),
+                  style: GoogleFonts.inter(fontSize: 15, color: c.texto),
                   decoration: _decoracao('Nome', Icons.person_outline),
                 ),
                 const SizedBox(height: 16),
@@ -513,7 +519,7 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validarEmail,
                   onFieldSubmitted: (_) => _salvar(),
-                  style: GoogleFonts.inter(fontSize: 15, color: _texto),
+                  style: GoogleFonts.inter(fontSize: 15, color: c.texto),
                   decoration:
                       _decoracao('E-mail', Icons.alternate_email),
                 ),
@@ -521,7 +527,7 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                 ElevatedButton(
                   onPressed: _salvar,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _laranja,
+                    backgroundColor: c.laranja,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     minimumSize: const Size.fromHeight(52),
@@ -553,50 +559,16 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
 class _AjudaSuportePage extends StatelessWidget {
   const _AjudaSuportePage();
 
-  static const Color _fundo = Color(0xFFFDFBF7);
-  static const Color _texto = Color(0xFF243044);
-
-  static const String _centralAjuda = '''CENTRAL DE AJUDA DO IKAI
-
-Bem-vindo à Central de Ajuda do Ikai! Nosso objetivo é proporcionar uma experiência digital mais consciente, incentivando o aprendizado e o uso saudável da tecnologia.
-
-O que é o Ikai?
-O Ikai é um aplicativo de aprendizagem e uma rede social que busca oferecer conteúdos de forma consciente, com feed finito e controle de tempo.
-
-Tipos de conteúdo
-O aplicativo contempla três formatos principais: artigos, vídeos educativos e vídeos low dopamine, que apresentam uma proposta mais tranquila de conteúdo.
-
-Feed e limite de tempo
-O Ikai foi pensado para evitar a rolagem infinita e permitir que o usuário defina o tempo de cada sessão, incentivando escolhas conscientes sobre o uso do aplicativo.
-
-Personalização e biblioteca
-A proposta é permitir a escolha de interesses e filtros de conteúdo, além de oferecer uma biblioteca pessoal para guardar referências e consultar materiais posteriormente.
-
-Metas e notificações
-O aplicativo prevê metas e conquistas voltadas ao progresso individual, sem foco em rankings competitivos, e busca evitar notificações insistentes.
-
-Privacidade e segurança
-O projeto prioriza a privacidade, evita solicitar informações desnecessárias e prevê proteção das conversas por criptografia de ponta a ponta. A disponibilidade dessas proteções depende da implementação efetiva.
-
-Dados e conta
-Estão previstos recursos para exportar dados e solicitar a exclusão da conta, conforme a implementação do sistema.
-
-Problemas e sugestões
-Em caso de erros, recomenda-se reiniciar o aplicativo, verificar atualizações e registrar o ocorrido. Os usuários também podem enviar sugestões pelos canais disponibilizados.
-
-Denúncias e suporte
-Publicações inadequadas podem ser denunciadas caso o recurso esteja disponível. Se precisar de mais ajuda, procure o canal oficial de suporte do Ikai.
-
-Ikai — Aprenda, descubra e aproveite seu tempo com mais consciência.
-''';
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Scaffold(
-      backgroundColor: _fundo,
+      backgroundColor: c.fundo,
       appBar: AppBar(
-        backgroundColor: _fundo,
-        foregroundColor: _texto,
+        backgroundColor: c.fundo,
+        foregroundColor: c.texto,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -607,13 +579,38 @@ Ikai — Aprenda, descubra e aproveite seu tempo com mais consciência.
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Text(
-            _centralAjuda,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              height: 1.7,
-              color: _texto,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: c.laranjaClaro,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  'Conteúdo provisório.',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: c.laranja,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Aqui você encontrará respostas para as dúvidas mais '
+                'comuns sobre o Ykai e os canais de atendimento.\n\n'
+                'Os canais de contato do suporte ainda não foram '
+                'definidos. Adicione-os aqui antes de publicar o '
+                'aplicativo.',
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  height: 1.7,
+                  color: c.texto,
+                ),
+              ),
+            ],
           ),
         ),
       ),
