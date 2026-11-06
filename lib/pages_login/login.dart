@@ -130,7 +130,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),         
                   prefixIcon: Icon(Icons.email),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10)
+                    borderRadius: BorderRadius.circular(10),
+                    
                   ), 
                 ),
               ),
@@ -161,7 +162,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   prefixIcon: Icon(Icons.lock),    
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10)
+                    borderRadius: BorderRadius.circular(10),
+
                   ),             
                   suffixIcon: IconButton(
                     onPressed: (){

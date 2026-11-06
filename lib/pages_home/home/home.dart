@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,8 @@ import '../comunidade.dart';
 import '../perfil/perfil.dart';
 import '../progresso.dart';
 import '../explorar.dart';
+
+import '../perfil/perfil.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -75,109 +78,126 @@ void vizualizar() {
                   // CABEÇALHO
                   // =========================
                   Row(
-                    children: [
-                      Container(
-                        width: 55,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: const DecorationImage(
-                            image: AssetImage(
-                              'assets/Temporario_foto_perfil.png',
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                          border: Border.all(
-                            color: const Color(0xFFE8D5B0),
-                            width: 3,
-                          ),
-                        ),
-                      ),
+  children: [
+    ValueListenableBuilder<Uint8List?>(
+      valueListenable: PerfilSessao.foto,
+      builder: (context, bytesFoto, _) {
+        return ClipOval(
+          child: Container(
+              width: 55,
+              height: 55,
+              color: const Color(0xFFFBEFEA),
+              child: bytesFoto == null
+                  ? const Icon(
+                      Icons.person_outline_rounded,
+                      size: 32,
+                      color: Color(0xFFCB5A34),
+                    )
+                  : Image.memory(
+                      bytesFoto,
+                      gaplessPlayback: true,
+                      width: 55,
+                      height: 55,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.person_outline_rounded,
+                          size: 32,
+                          color: Color(0xFFE58A45),
+                        );
+                      },
+                    ),
+          ),
+        );
+      },
+    ),
 
-                      const SizedBox(width: 10),
+    const SizedBox(width: 10),
 
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Bem-vinda de volta,',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            Text(
-                              'Olá, JAIR BOLSONARO',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Bem-vinda de volta,',
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          // Nome: acompanha o nome editado no Perfil
+          ValueListenableBuilder<DadosPerfil?>(
+            valueListenable: PerfilSessao.dados,
+            builder: (context, dados, _) {
+              final nome = dados?.nome ?? 'Nome do usuário';
+              return Text(
+                'Olá, $nome',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
 
-                      const SizedBox(width: 8),
+    const SizedBox(width: 8),
 
-                      // Botão sustentabilidade
-                      SizedBox(
-                        width: 42,
-                        height: 42,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFEAF2EC),
-                            foregroundColor:
-                                const Color(0xFF4B7F5A),
-                            elevation: 0,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.eco_outlined,
-                            size: 28,
-                          ),
-                        ),
-                      ),
+    // Botão sustentabilidade
+    SizedBox(
+      width: 42,
+      height: 42,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFEAF2EC),
+          foregroundColor: const Color(0xFF4B7F5A),
+          elevation: 0,
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: const Icon(
+          Icons.eco_outlined,
+          size: 28,
+        ),
+      ),
+    ),
 
-                      const SizedBox(width: 8),
+    const SizedBox(width: 8),
 
-                      // Botão notificações
-                      SizedBox(
-                        width: 42,
-                        height: 42,
-                        child: ElevatedButton(
-                          onPressed: notificacoes,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor:
-                                const Color(0xFF243044),
-                            elevation: 0,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(16),
-                              side: const BorderSide(
-                                color: Color(0xFFE7EDF1),
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.notifications_none_rounded,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+    // Botão notificações
+    SizedBox(
+      width: 42,
+      height: 42,
+      child: ElevatedButton(
+        onPressed: notificacoes,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFF243044),
+          elevation: 0,
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(
+              color: Color(0xFFE7EDF1),
+              width: 2,
+            ),
+          ),
+        ),
+        child: const Icon(
+          Icons.notifications_none_rounded,
+          size: 28,
+        ),
+      ),
+    ),
+  ],
+),
 
                   const SizedBox(height: 30),
 
@@ -432,9 +452,6 @@ class WellBeingCard extends StatelessWidget {
 // PRÁTICAS RÁPIDAS
 // =====================================================
 
-/// Dados de cada prática do carrossel.
-/// [imagePath] é opcional: enquanto for null (ou o arquivo não existir),
-/// o cartão mostra um ícone sobre fundo circular colorido.
 class QuickPractice {
   final String title;
   final IconData icon;
@@ -461,12 +478,10 @@ class QuickPracticesSection extends StatelessWidget {
     required this.vizualizar,
   });
 
-  // Altura da área do carrossel (cartão de 118 + folga para a sombra)
+
   static const double _carouselHeight = 124;
 
-  // TODO: quando existirem as páginas de cada prática, preencha o onTap.
-  // Para usar fotos, informe imagePath, por exemplo:
-  // imagePath: 'assets/praticas/meditacao.png'
+
   static const List<QuickPractice> _praticas = [
     QuickPractice(
       title: 'Meditação',

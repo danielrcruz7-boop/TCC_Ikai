@@ -1,7 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ikai/pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart';
-import '';
 import './configuracao.dart';
 
 /// Dados exibidos no Perfil.
@@ -15,22 +17,36 @@ class DadosPerfil {
   });
 }
 
-/// Guarda em MEMÓRIA os dados editados pelo usuário.
-///
-/// Por que existe: a Home troca entre o conteúdo da aba "Home" e o
-/// `IndexedStack`, e isso descarta o estado do `PerfilPage` ao voltar
-/// para a primeira aba. Guardar aqui evita perder o nome/e-mail editado
-/// ao trocar de aba.
-///
-/// ATENÇÃO: não há persistência. Ao fechar o aplicativo os dados voltam
-/// aos valores originais. Substitua por armazenamento permanente
-/// (ex.: shared_preferences) ou pelo sistema de contas quando existir.
+
 class PerfilSessao {
   PerfilSessao._();
 
   static final ValueNotifier<DadosPerfil?> dados =
       ValueNotifier<DadosPerfil?>(null);
+
+
+  static final ValueNotifier<Uint8List?> foto =
+      ValueNotifier<Uint8List?>(null);
+
+  static Future<void> selecionarFoto() async {
+    try {
+      final imagem = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+        maxWidth: 1200,
+      );
+
+      if (imagem == null) return;
+
+      final bytes = await imagem.readAsBytes();
+
+      if (bytes.isNotEmpty) {
+        foto.value = bytes;
+      }
+    } catch (_) {}
+  }
 }
+
 
 class PerfilPage extends StatefulWidget {
   final String nome;
@@ -49,6 +65,30 @@ class PerfilPage extends StatefulWidget {
 class _PerfilPageState extends State<PerfilPage> {
   YkaiCores get c => context.cores;
 
+  @override
+  void initState() {
+    super.initState();
+    _recuperarFotoSelecionada();
+  }
+
+  // No Android, o sistema pode encerrar a atividade enquanto a galeria
+  // está aberta. Este método recupera a imagem escolhida nesse cenário.
+  Future<void> _recuperarFotoSelecionada() async {
+    try {
+      final resposta = await ImagePicker().retrieveLostData();
+      if (resposta.isEmpty || resposta.files == null ||
+          resposta.files!.isEmpty) {
+        return;
+      }
+
+      final bytes = await resposta.files!.first.readAsBytes();
+      if (bytes.isNotEmpty) {
+        PerfilSessao.foto.value = bytes;
+      }
+    } catch (_) {
+      // Se não houver imagem perdida, o perfil continua funcionando normalmente.
+    }
+  }
 
   void _mensagem(String texto) {
     ScaffoldMessenger.of(context)
@@ -85,45 +125,79 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  void _abrirAjuda() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const _AjudaSuportePage(),
-      ),
-    );
+  Future<void> _selecionarFoto() async {
+    try {
+      final imagem = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+        maxWidth: 1200,
+      );
+
+      if (imagem == null) return;
+
+      // Lê a imagem inteira para a memória.
+      final bytes = await imagem.readAsBytes();
+
+      if (bytes.isEmpty) {
+        if (mounted) {
+          _mensagem('Não foi possível carregar a imagem escolhida.');
+        }
+        return;
+      }
+
+      // Atualiza o perfil mesmo se o Android tiver reconstruído a tela.
+      PerfilSessao.foto.value = bytes;
+
+      if (mounted) {
+        _mensagem('Foto de perfil atualizada.');
+      }
+    } catch (erro) {
+      if (mounted) {
+        _mensagem('Não foi possível carregar a foto. Tente escolher outra imagem.');
+      }
+    }
   }
 
-  Future<void> _confirmarSaida() async {
-    final confirmar = await showDialog<bool>(
+  void _abrirAreaPostagens() {
+    _mensagem('A área de postagens será disponibilizada em uma próxima etapa.');
+  }
+
+  void _compartilharPerfil(DadosPerfil dados) {
+    final usuario = '@${dados.nome.toLowerCase().replaceAll(' ', '')}';
+
+    showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Sair da conta?'),
-        content: const Text('Deseja realmente sair da sua conta?'),
+        title: const Text('Compartilhar perfil'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Compartilhe seu perfil do IKAI com outras pessoas.'),
+            const SizedBox(height: 12),
+            SelectableText(
+              usuario,
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.bold,
+                color: c.laranja,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'O compartilhamento externo poderá ser conectado em uma próxima etapa.',
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(
-              'Sair',
-              style: TextStyle(color: c.laranja),
-            ),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Fechar'),
           ),
         ],
       ),
     );
-
-    if (confirmar == true && mounted) {
-      // O projeto ainda não possui sistema de autenticação.
-      // Nenhuma sessão é encerrada e nenhum dado é apagado.
-      _mensagem(
-        'A saída da conta ainda precisa ser conectada ao sistema de '
-        'autenticação. Nenhum dado foi apagado.',
-      );
-    }
   }
 
   @override
@@ -132,17 +206,21 @@ class _PerfilPageState extends State<PerfilPage> {
       backgroundColor: c.fundo,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
           child: ValueListenableBuilder<DadosPerfil?>(
             valueListenable: PerfilSessao.dados,
             builder: (context, editados, _) {
               final dados = editados ??
                   DadosPerfil(nome: widget.nome, email: widget.email);
+              final usuario = dados.nome
+                  .trim()
+                  .toLowerCase()
+                  .replaceAll(RegExp(r'\s+'), '');
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Cabeçalho
+                  // Cabeçalho: título e botão original de configurações.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -179,25 +257,74 @@ class _PerfilPageState extends State<PerfilPage> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 28),
 
-                  const SizedBox(height: 36),
-
-                  // Avatar
+                  // Foto centralizada, com acesso à galeria do dispositivo.
                   Center(
-                    child: CircleAvatar(
-                      radius: 52,
-                      backgroundColor: c.laranjaClaro,
-                      child: Icon(
-                        Icons.person_outline,
-                        size: 56,
-                        color: c.laranja,
-                      ),
+                    child: ValueListenableBuilder<Uint8List?>(
+                      valueListenable: PerfilSessao.foto,
+                      builder: (context, bytesFoto, _) {
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            GestureDetector(
+                              onTap: _selecionarFoto,
+                              child: ClipOval(
+                                child: Container(
+                                  width: 116,
+                                  height: 116,
+                                  color: c.laranjaClaro,
+                                  child: bytesFoto == null
+                                      ? Icon(
+                                          Icons.person_outline_rounded,
+                                          size: 62,
+                                          color: c.laranja,
+                                        )
+                                      : Image.memory(
+                                          bytesFoto,
+                                          gaplessPlayback: true,
+                                          width: 116,
+                                          height: 116,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Icon(
+                                              Icons.person_outline_rounded,
+                                              size: 62,
+                                              color: c.laranja,
+                                            );
+                                          },
+                                        ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Material(
+                                color: c.laranja,
+                                shape: const CircleBorder(),
+                                child: InkWell(
+                                  customBorder: const CircleBorder(),
+                                  onTap: _selecionarFoto,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(9),
+                                    child: Icon(
+                                      Icons.camera_alt_outlined,
+                                      color: Colors.white,
+                                      size: 19,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-
                   const SizedBox(height: 16),
 
-                  // Nome
+                  // Descrições do usuário abaixo da foto.
                   Center(
                     child: Text(
                       dados.nome,
@@ -205,158 +332,150 @@ class _PerfilPageState extends State<PerfilPage> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        fontSize: 21,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: c.texto,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 6),
-
-                  // E-mail
+                  const SizedBox(height: 4),
+                  Center(
+                    child: Text(
+                      '@${usuario.isEmpty ? 'usuario' : usuario}',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: c.textoSecundario,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                   Center(
                     child: Text(
                       dados.email,
                       textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: c.textoSecundario,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 32),
-
-                  // Meu perfil
-                  _CartaoNavegacao(
-                    icone: Icons.badge_outlined,
-                    titulo: 'Meu perfil',
-                    descricao: 'Visualize e edite seu nome e e-mail',
-                    aoTocar: () => _abrirEdicao(dados),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Ajuda e suporte
-                  _CartaoNavegacao(
-                    icone: Icons.help_outline,
-                    titulo: 'Ajuda e suporte',
-                    descricao: 'Dúvidas e canais de atendimento',
-                    aoTocar: _abrirAjuda,
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Sair da conta
-                  OutlinedButton.icon(
-                    onPressed: _confirmarSaida,
-                    icon: const Icon(Icons.logout, size: 20),
-                    label: Text(
-                      'Sair da conta',
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      'Aproveitando o tempo com mais consciência. 🌱',
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: c.laranja,
-                      backgroundColor: c.cartao,
-                      side: BorderSide(color: c.laranja),
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// =====================================================
-// CARTÃO DE NAVEGAÇÃO (padrão visual de Configurações)
-// =====================================================
-
-class _CartaoNavegacao extends StatelessWidget {
-  final IconData icone;
-  final String titulo;
-  final String descricao;
-  final VoidCallback aoTocar;
-
-  const _CartaoNavegacao({
-    required this.icone,
-    required this.titulo,
-    required this.descricao,
-    required this.aoTocar,
-  });
-
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.cores;
-
-    return Material(
-      color: c.cartao,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: aoTocar,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: c.borda),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: c.laranjaClaro,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(icone, color: c.laranja, size: 23),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      titulo,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        height: 1.45,
                         color: c.texto,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      descricao,
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: c.textoSecundario,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // A edição e o compartilhamento do perfil são mantidos.
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => _abrirEdicao(dados),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: c.laranja,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            minimumSize: const Size.fromHeight(42),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Editar perfil',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => _compartilharPerfil(dados),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: c.texto,
+                            side: BorderSide(color: c.borda),
+                            minimumSize: const Size.fromHeight(42),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Compartilhar perfil',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+
+                  Divider(color: c.borda, height: 1),
+                  const SizedBox(height: 18),
+
+                  // Área reservada para postagens futuras.
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Publicações',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: c.texto,
+                        ),
+                      ),
+                      Tooltip(
+                        message: 'Criar publicação',
+                        child: IconButton(
+                          onPressed: _abrirAreaPostagens,
+                          icon: Icon(
+                            Icons.camera_alt_outlined,
+                            color: c.laranja,
+                            size: 25,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 28),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.photo_library_outlined,
+                            size: 42,
+                            color: c.textoSuave,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Suas publicações aparecerão aqui.',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: c.textoSecundario,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Icon(Icons.chevron_right, color: c.textoSuave),
-            ],
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -545,72 +664,6 @@ class _EditarPerfilPageState extends State<_EditarPerfilPage> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// =====================================================
-// AJUDA E SUPORTE
-// =====================================================
-
-class _AjudaSuportePage extends StatelessWidget {
-  const _AjudaSuportePage();
-
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.cores;
-
-    return Scaffold(
-      backgroundColor: c.fundo,
-      appBar: AppBar(
-        backgroundColor: c.fundo,
-        foregroundColor: c.texto,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          'Ajuda e suporte',
-          style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: c.laranjaClaro,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Text(
-                  'Conteúdo provisório.',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: c.laranja,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Aqui você encontrará respostas para as dúvidas mais '
-                'comuns sobre o Ykai e os canais de atendimento.\n\n'
-                'Os canais de contato do suporte ainda não foram '
-                'definidos. Adicione-os aqui antes de publicar o '
-                'aplicativo.',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  height: 1.7,
-                  color: c.texto,
-                ),
-              ),
-            ],
           ),
         ),
       ),

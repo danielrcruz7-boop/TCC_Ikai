@@ -6,9 +6,8 @@ import 'package:ikai/pages_home/perfil/perfil.dart';
 import './botoes_configuracao/conta/alterar_informacoes_de_acesso.dart';
 import './botoes_configuracao/conta/perfil.dart';
 
-import './botoes_configuracao/ajuda_e_informacoes/ajuda_e_suporte.dart';
 import './botoes_configuracao/ajuda_e_informacoes/central_de_ajuda.dart';
-import './botoes_configuracao/ajuda_e_informacoes/sobre_ikai.dart';
+import './botoes_configuracao/ajuda_e_informacoes/sobre_ikai.dart' hide perfilPage;
 
 import './botoes_configuracao/conta_e_sessao/sair_da_conta.dart';
 import './botoes_configuracao/conta_e_sessao/excluir_conta.dart';
@@ -391,96 +390,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
                   const SizedBox(height: 24),
 
-                  // ESTUDOS
-                  _tituloSecao(
-                    'Preferências de estudo',
-                    Icons.school_outlined,
-                  ),
-
-                  _cartao([
-                    _item(
-                      icone: Icons.flag_outlined,
-                      titulo: 'Objetivos de aprendizagem',
-                      descricao: 'Gerencie suas metas de estudo',
-                      aoTocar: () {
-                        _mensagem(
-                          'A tela de objetivos de aprendizagem ainda não existe '
-                          'no projeto.',
-                        );
-                      },
-                    ),
-
-                    _divisor(),
-
-                    _item(
-                      icone: Icons.schedule_outlined,
-                      titulo: 'Horários de estudo',
-                      descricao: 'Organize sua rotina',
-                      aoTocar: () {
-                        _mensagem(
-                          'A tela de horários de estudo ainda não existe no projeto.',
-                        );
-                      },
-                    ),
-                  ]),
-
-                  const SizedBox(height: 24),
-
-                  // IDIOMA
-                  _tituloSecao(
-                    'Idioma',
-                    Icons.language,
-                  ),
-
-                  _cartao([
-                    ListTile(
-                      leading: Icon(
-                        Icons.translate,
-                        color: c.laranja,
-                      ),
-                      title: Text(
-                        'Idioma do aplicativo',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: c.texto,
-                        ),
-                      ),
-                      trailing: DropdownButton<String>(
-                        value: _idioma,
-                        underline: const SizedBox(),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'Português',
-                            child: Text('Português'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'English',
-                            child: Text('English'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Español',
-                            child: Text('Español'),
-                          ),
-                        ],
-                        onChanged: (valor) {
-                          if (valor == null) return;
-
-                          setState(() {
-                            _idioma = valor;
-                          });
-
-                          _mensagem(
-                            'Idioma selecionado: $_idioma. '
-                            'A tradução global precisa ser implementada.',
-                          );
-                        },
-                      ),
-                    ),
-                  ]),
-
-                  const SizedBox(height: 24),
-
                   // PRIVACIDADE
                   _tituloSecao(
                     'Privacidade e segurança',
@@ -489,15 +398,15 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
                   _cartao([
                     _item(
-                      icone: Icons.privacy_tip_outlined,
+                      icone: Icons.badge_outlined,
                       titulo: 'Privacidade',
-                      descricao: 'Consulte suas opções de privacidade',
+                      descricao: 'Consulte suas opções privacidade',
                       aoTocar: () {
-                        _abrirDocumento(
-                          'Privacidade',
-                          'Aqui ficarão as informações sobre '
-                          'coleta, uso, armazenamento e proteção '
-                          'dos dados dos usuários do Ykai.',
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrivacidadePage(),
+                          ),
                         );
                       },
                     ),
@@ -505,29 +414,15 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                     _divisor(),
 
                     _item(
-                      icone: Icons.description_outlined,
+                      icone: Icons.badge_outlined,
                       titulo: 'Termos de Uso',
                       descricao: 'Leia os termos do aplicativo',
                       aoTocar: () {
-                        _abrirDocumento(
-                          'Termos de Uso',
-                          'Insira aqui o texto oficial dos '
-                          'Termos de Uso do Ykai antes de '
-                          'publicar o aplicativo.',
-                        );
-                      },
-                    ),
-
-                    _divisor(),
-
-                    _item(
-                      icone: Icons.download_outlined,
-                      titulo: 'Meus dados',
-                      descricao: 'Informações sobre seus dados',
-                      aoTocar: () {
-                        _mensagem(
-                          'A consulta e exportação dos dados '
-                          'precisam ser implementadas.',
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TermosDeUsoPage(),
+                          ),
                         );
                       },
                     ),
@@ -543,15 +438,15 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
                   _cartao([
                     _item(
-                      icone: Icons.help_outline,
+                      icone: Icons.badge_outlined,
                       titulo: 'Central de ajuda',
                       descricao: 'Perguntas frequentes e suporte',
                       aoTocar: () {
-                        _abrirDocumento(
-                          'Central de ajuda',
-                          'Aqui você poderá adicionar perguntas '
-                          'frequentes, orientações e informações '
-                          'de contato do suporte.',
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CentralDeAjudaPage(),
+                          ),
                         );
                       },
                     ),
@@ -559,17 +454,15 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                     _divisor(),
 
                     _item(
-                      icone: Icons.info_outline,
-                      titulo: 'Sobre o Ykai',
+                      icone: Icons.badge_outlined,
+                      titulo: 'Sobre o Ikai',
                       descricao: 'Informações sobre o aplicativo',
                       aoTocar: () {
-                        _abrirDocumento(
-                          'Sobre o Ykai',
-                          'Ykai\n\n'
-                          'Aplicativo de aprendizagem.\n'
-                          'Versão 1.0.0\n\n'
-                          'Adicione aqui os créditos e '
-                          'as informações oficiais do projeto.',
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SobreIkaiPage(),
+                          ),
                         );
                       },
                     ),
@@ -607,7 +500,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
                   Center(
                     child: Text(
-                      'YKAI • Versão 1.0.0',
+                      'IKAI • Versão 1.0.0',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: c.textoSuave,

@@ -31,7 +31,6 @@ import './pages_home/perfil/configuracao.dart';
 import './pages_home/perfil/botoes_configuracao/conta/alterar_informacoes_de_acesso.dart';
 import './pages_home/perfil/botoes_configuracao/conta/perfil.dart';
 
-import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/ajuda_e_suporte.dart';
 import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/central_de_ajuda.dart';
 import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/sobre_ikai.dart';
 

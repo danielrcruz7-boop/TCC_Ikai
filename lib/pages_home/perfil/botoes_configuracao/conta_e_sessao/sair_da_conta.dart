@@ -7,11 +7,11 @@ class DadosPessoaisScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('sair da conta'),
+        title: const Text('notificação'),
       ),
       body: const Center(
         child: Text(
-          'sair da conta',
+          'notificação',
           style: TextStyle(fontSize: 20),
         ),
       ),
