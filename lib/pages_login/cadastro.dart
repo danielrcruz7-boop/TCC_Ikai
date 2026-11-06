@@ -101,6 +101,8 @@ class _CadastroPageState extends State<CadastroPage> {
                 child: TextField(
                   controller: nomeController,
                   decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                     label: Text(
                       'Full name',
                       style: GoogleFonts.inter(fontWeight: FontWeight.bold),
@@ -124,6 +126,8 @@ class _CadastroPageState extends State<CadastroPage> {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                     label: Text(
                       'E-mail',
                       style: GoogleFonts.inter(fontWeight: FontWeight.bold),
@@ -151,6 +155,8 @@ class _CadastroPageState extends State<CadastroPage> {
                   controller: senhaController,
                   obscureText: esconderSenha,
                   decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                     label: Text(
                       'Password',
                       style: GoogleFonts.inter(fontWeight: FontWeight.bold),
@@ -190,6 +196,8 @@ class _CadastroPageState extends State<CadastroPage> {
                   controller: confirmaSenhaController,
                   obscureText: esconderConfirmaSenha,
                   decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                     label: Text(
                       'Confirm Password',
                       style: GoogleFonts.inter(fontWeight: FontWeight.bold),

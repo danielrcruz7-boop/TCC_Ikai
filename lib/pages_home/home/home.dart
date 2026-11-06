@@ -86,7 +86,7 @@ void vizualizar() {
           child: Container(
               width: 55,
               height: 55,
-              color: const Color(0xFFFBEFEA),
+              color: const Color.fromARGB(255, 237, 241, 243),
               child: bytesFoto == null
                   ? const Icon(
                       Icons.person_outline_rounded,
@@ -129,7 +129,7 @@ void vizualizar() {
           ValueListenableBuilder<DadosPerfil?>(
             valueListenable: PerfilSessao.dados,
             builder: (context, dados, _) {
-              final nome = dados?.nome ?? 'Nome do usuário';
+              final nome = dados?.nome ?? 'Usuario-01';
               return Text(
                 'Olá, $nome',
                 maxLines: 1,

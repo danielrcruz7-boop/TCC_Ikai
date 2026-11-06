@@ -112,10 +112,13 @@ class _LoginPageState extends State<LoginPage> {
                 child:  SizedBox(
                   width: 1200, 
                   height: 50,    
-                child:  TextField(
+
+                    child:  TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                     label: Text(
                     'E-mail',
                     style: GoogleFonts.inter(
@@ -131,7 +134,10 @@ class _LoginPageState extends State<LoginPage> {
                   prefixIcon: Icon(Icons.email),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 2,
+                    )
                   ), 
                 ),
               ),
@@ -148,6 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                 controller: senhaController,
                 obscureText: esconderSenha,
                 decoration:  InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
                   label: Text(
                     'Password',
                   style: GoogleFonts.inter(

@@ -342,16 +342,17 @@ class OpcaoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mostrarSugestao = sugerido && !selecionado;
 
+    final mostrarSugestao = sugerido && !selecionado;
     return InkWell(
+      
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: selecionado ? const Color(0xFFE4EFE5) : Colors.white,
+          color: selecionado ? const Color.fromARGB(255, 230, 232, 230) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selecionado
@@ -369,7 +370,7 @@ class OpcaoCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: selecionado
-                    ? const Color(0xFFD0E3D2)
+                    ? const Color.fromARGB(255, 247, 249, 247)
                     : const Color(0xFFF0F3EE),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -382,7 +383,7 @@ class OpcaoCard extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF263D2D),
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
             ),
@@ -502,7 +503,7 @@ class _FluxoObjetivosPageState extends State<FluxoObjetivosPage> {
             if (!didPop) c.voltar();
           },
           child: Scaffold(
-            backgroundColor: _fundo,
+            backgroundColor: const Color.fromARGB(255, 237, 241, 243),
             body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(24),

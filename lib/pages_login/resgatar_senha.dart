@@ -86,6 +86,8 @@ class _ResgatarSenhaPageState extends State<ResgatarSenhaPage>{
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
                     label: Text(
                     'E-mail',
                     style: GoogleFonts.inter(
