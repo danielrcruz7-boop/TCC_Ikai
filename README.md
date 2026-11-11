@@ -51,6 +51,16 @@
 [ ] Conectar os controladores a um serviço de autenticação (ex: Firebase ou API)
 [ ] Adicionar animação personalizada na transição de telas
 
+# Plataformas
+O app roda em **Android** e **Web**:
+```bash
+flutter run -d chrome       # navegador
+flutter run -d <celular>    # Android (veja os ids com `flutter devices`)
+```
+A pasta `windows/` (versão desktop do Windows) foi removida porque ela exigia
+o Modo de Desenvolvedor do Windows em toda máquina que compila o projeto.
+Para recriá-la, se necessário: `flutter create --platforms=windows .`
+
 # Testes
 Os testes ficam em `test/`:
 - `test/unit/` — testes unitários (duração, catálogo de objetivos, `ControleObjetivos`, aparência, perfil);

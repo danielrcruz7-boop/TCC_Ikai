@@ -2,6 +2,8 @@
 
 ## Projeto
 App Flutter "Ikai" (Flutter 3.38 / Dart 3.10). Sem backend; estado em memória e histórico em `shared_preferences`.
+Plataformas: **Android e Web** (a pasta `windows/` foi removida em 11/11/2026 para o projeto rodar
+sem Modo de Desenvolvedor; para recriar, use `flutter create --platforms=windows .`).
 
 ## Comandos importantes
 Todos executados a partir da pasta `TCC_Ikai/`.
@@ -15,10 +17,35 @@ flutter doctor                     # verifica a instalação do Flutter
 ### Rodar o aplicativo
 ```bash
 flutter devices                    # lista aparelhos/emuladores/navegadores disponíveis
-flutter run                        # roda no dispositivo padrão (r = hot reload, R = hot restart, q = sair)
-flutter run -d chrome              # roda no navegador
-flutter run -d windows             # roda como app Windows
-flutter run -d <id_do_aparelho>    # roda em um celular/emulador específico
+flutter emulators                  # lista emuladores Android instalados
+flutter emulators --launch <id>    # abre um emulador Android
+flutter run                        # roda no dispositivo padrão
+flutter run -d chrome              # roda no navegador Chrome
+flutter run -d edge                # roda no navegador Edge
+flutter run -d web-server          # sobe um servidor e mostra a URL para abrir em qualquer navegador
+flutter run -d <id_do_aparelho>    # roda em um celular/emulador específico (id vem do `flutter devices`)
+flutter run -d windows             # NÃO FUNCIONA: o alvo Windows foi removido do projeto (ver nota abaixo)
+flutter run --release              # roda em modo release (sem DevicePreview, mais rápido)
+```
+Atalhos com o app rodando no terminal: `r` = hot reload, `R` = hot restart, `c` = limpar tela,
+`d` = desconectar (app continua aberto), `q` = sair.
+
+### Sobre o Modo de Desenvolvedor ("Building with plugins requires symlink support")
+JÁ RESOLVIDO no projeto: a pasta `windows/` foi removida, pois era ela que fazia o Flutter
+criar links simbólicos dos plugins e exigir o Modo de Desenvolvedor em toda máquina.
+Sem ela, `flutter run -d chrome` e Android funcionam em qualquer computador, sem configuração.
+Para recriar a versão Windows: `flutter create --platforms=windows .`
+Se o erro aparecer de novo, a solução definitiva para esse computador é ativar
+`start ms-settings:developers` ou rodar o terminal como administrador.
+
+### Diagnóstico e configuração do Flutter
+```bash
+flutter --version                  # versão do Flutter e do Dart
+flutter doctor -v                  # diagnóstico detalhado (Android SDK, Chrome, Visual Studio...)
+flutter config --list              # mostra as configurações atuais (plataformas habilitadas etc.)
+flutter pub outdated               # pacotes com versões mais novas
+flutter pub upgrade                # atualiza pacotes respeitando o pubspec.yaml
+flutter upgrade                    # atualiza o próprio Flutter (cuidado: muda a versão para toda a equipe)
 ```
 
 ### Testes
@@ -62,7 +89,6 @@ npx http-server docs/api -p 8100
 ```bash
 flutter build apk --release        # Android (gera build/app/outputs/flutter-apk/app-release.apk)
 flutter build web --release        # Web (gera build/web)
-flutter build windows --release    # Windows
 flutter clean                      # limpa os arquivos de build (use se o build ficar estranho)
 ```
 
