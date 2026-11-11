@@ -50,3 +50,27 @@
 [ ] Exibir um SnackBar ao clicar em resgatar senha confirmando o envio do link
 [ ] Conectar os controladores a um serviço de autenticação (ex: Firebase ou API)
 [ ] Adicionar animação personalizada na transição de telas
+
+# Testes
+Os testes ficam em `test/`:
+- `test/unit/` — testes unitários (duração, catálogo de objetivos, `ControleObjetivos`, aparência, perfil);
+- `test/widget/` — testes de widget (validações de login/cadastro/recuperação de senha, fluxo de objetivos, `SessaoGuard`/tela de bloqueio).
+
+```bash
+flutter test                 # todos os testes
+flutter test test/unit       # apenas os unitários
+flutter test --coverage      # gera coverage/lcov.info
+```
+
+# Documentação da API (Swagger / OpenAPI)
+O contrato da API REST que o backend deve implementar está em `docs/api/openapi.yaml` (OpenAPI 3.0.3).
+O aplicativo ainda não possui backend; a especificação segue o modelo de dados proposto no Relatório Técnico (Seção 8.5) e as regras de negócio já implementadas no app.
+
+Para visualizar no Swagger UI, sirva a pasta por HTTP (abrir o arquivo direto no navegador não carrega o YAML):
+
+```bash
+npx http-server docs/api -p 8099
+# abra http://localhost:8099
+```
+
+Também é possível colar o conteúdo de `openapi.yaml` em https://editor.swagger.io.

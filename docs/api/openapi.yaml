@@ -1,0 +1,1098 @@
+openapi: 3.0.3
+info:
+  title: Ikai API
+  version: 1.0.0
+  description: |
+    Contrato da API REST do aplicativo **Ikai**.
+
+    > **Situação:** o aplicativo Flutter ainda **não possui backend** — hoje os
+    > dados ficam em memória e apenas o histórico da última sessão é gravado no
+    > aparelho (`shared_preferences`). Este documento define o contrato que o
+    > backend deve implementar para substituir esses dados locais, seguindo o
+    > modelo de dados proposto no Relatório Técnico (Seção 8.5) e as regras de
+    > negócio já implementadas no app.
+
+    ### Regras de negócio refletidas no contrato
+    | Código | Regra |
+    |--------|-------|
+    | RN01 | A duração da sessão deve estar entre 1 e 10.800 segundos (3 horas). |
+    | RN04 | A categoria escolhida deve pertencer ao objetivo escolhido. |
+    | RN06 | Cada usuário pode ter no máximo uma sessão ativa. |
+    | RN07 | O tempo restante é calculado pelo servidor; a sessão expira sozinha. |
+    | RN18 | O tamanho do texto deve estar entre 0,8 e 1,4. |
+    | RN19 | Uma notificação removida pode ser restaurada ("Desfazer"). |
+
+    ### Autenticação
+    Os endpoints protegidos exigem o cabeçalho
+    `Authorization: Bearer <token>`, obtido em `/auth/login`, `/auth/cadastro`
+    ou `/auth/social/{provedor}`.
+  contact:
+    name: Equipe Ikai — SENAI Nadir Dias Figueiredo
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Desenvolvimento local
+
+tags:
+  - name: Autenticação
+    description: Cadastro, login, login social e recuperação de senha.
+  - name: Usuário
+    description: Perfil do usuário autenticado e exclusão de conta.
+  - name: Preferências
+    description: Aparência e notificações (tela Configurações).
+  - name: Catálogo
+    description: Objetivos e categorias disponíveis para a sessão.
+  - name: Sessões
+    description: Configuração, início, acompanhamento e histórico das sessões de uso.
+  - name: Notificações
+    description: Central de notificações do usuário.
+
+security:
+  - bearerAuth: []
+
+paths:
+  # ============================================================
+  # AUTENTICAÇÃO
+  # ============================================================
+  /auth/cadastro:
+    post:
+      tags: [Autenticação]
+      summary: Criar conta
+      description: |
+        Equivale à tela **Cadastro**. Todos os campos são obrigatórios e
+        `senha` deve ser igual a `confirmacaoSenha`.
+      operationId: cadastrar
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CadastroRequest' }
+      responses:
+        '201':
+          description: Conta criada; o usuário já sai autenticado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '409':
+          description: E-mail já cadastrado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+              example: { codigo: EMAIL_EM_USO, mensagem: Este e-mail já está cadastrado. }
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+
+  /auth/login:
+    post:
+      tags: [Autenticação]
+      summary: Entrar com e-mail e senha
+      description: Equivale ao botão **Log In** da tela de login.
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Autenticado com sucesso.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '401':
+          description: E-mail ou senha incorretos.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+              example: { codigo: CREDENCIAIS_INVALIDAS, mensagem: E-mail ou senha incorretos. }
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+
+  /auth/social/{provedor}:
+    post:
+      tags: [Autenticação]
+      summary: Entrar com Google ou Facebook
+      description: |
+        Equivale aos botões **Continue with Google** / **Continue with Facebook**.
+        O app obtém o token do provedor e o envia para validação.
+      operationId: loginSocial
+      security: []
+      parameters:
+        - name: provedor
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [google, facebook]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginSocialRequest' }
+      responses:
+        '200':
+          description: Autenticado (conta criada automaticamente no primeiro acesso).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '401':
+          description: Token do provedor inválido ou expirado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+
+  /auth/recuperar-senha:
+    post:
+      tags: [Autenticação]
+      summary: Solicitar recuperação de senha
+      description: |
+        Equivale à tela **Recover Password**. Por segurança a resposta é
+        sempre `202`, exista ou não uma conta com o e-mail informado.
+      operationId: recuperarSenha
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RecuperarSenhaRequest' }
+      responses:
+        '202':
+          description: Se o e-mail existir, um link de redefinição será enviado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Mensagem' }
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+
+  /auth/logout:
+    post:
+      tags: [Autenticação]
+      summary: Sair da conta
+      description: Invalida o token atual (Configurações → Conta e sessão → Sair).
+      operationId: logout
+      responses:
+        '204':
+          description: Sessão de login encerrada.
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  # ============================================================
+  # USUÁRIO
+  # ============================================================
+  /usuarios/me:
+    get:
+      tags: [Usuário]
+      summary: Obter o perfil do usuário autenticado
+      operationId: obterPerfil
+      responses:
+        '200':
+          description: Perfil do usuário.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+    put:
+      tags: [Usuário]
+      summary: Editar perfil
+      description: Equivale à tela **Editar perfil** (nome e e-mail).
+      operationId: atualizarPerfil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AtualizarPerfilRequest' }
+      responses:
+        '200':
+          description: Perfil atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '409':
+          description: E-mail já utilizado por outra conta.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+    delete:
+      tags: [Usuário]
+      summary: Excluir conta
+      description: |
+        Exclui a conta e todos os dados associados (sessões, preferências e
+        notificações), atendendo ao art. 18 da LGPD. Exige a senha atual.
+      operationId: excluirConta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConfirmarSenhaRequest' }
+      responses:
+        '204':
+          description: Conta excluída.
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '403':
+          description: Senha incorreta.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+
+  /usuarios/me/senha:
+    put:
+      tags: [Usuário]
+      summary: Alterar senha
+      description: Equivale a **Alterar informações de acesso**.
+      operationId: alterarSenha
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AlterarSenhaRequest' }
+      responses:
+        '204':
+          description: Senha alterada.
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '403':
+          description: Senha atual incorreta.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+
+  /usuarios/me/foto:
+    put:
+      tags: [Usuário]
+      summary: Enviar foto de perfil
+      description: |
+        Substitui a foto de perfil. O app envia a imagem escolhida na galeria
+        (qualidade 90 %, largura máxima de 1200 px).
+      operationId: enviarFoto
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [foto]
+              properties:
+                foto:
+                  type: string
+                  format: binary
+                  description: Imagem JPEG ou PNG de até 5 MB.
+      responses:
+        '200':
+          description: Foto atualizada.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '413':
+          description: Arquivo maior que o permitido.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+        '415':
+          description: Formato de imagem não suportado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+    delete:
+      tags: [Usuário]
+      summary: Remover foto de perfil
+      operationId: removerFoto
+      responses:
+        '204':
+          description: Foto removida.
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  # ============================================================
+  # PREFERÊNCIAS
+  # ============================================================
+  /usuarios/me/preferencias:
+    get:
+      tags: [Preferências]
+      summary: Obter preferências
+      operationId: obterPreferencias
+      responses:
+        '200':
+          description: Preferências atuais (valores padrão se nunca alteradas).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preferencias' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+    patch:
+      tags: [Preferências]
+      summary: Atualizar preferências
+      description: |
+        Atualização parcial: envie apenas os campos alterados.
+        `tamanhoTexto` deve estar entre 0,8 e 1,4 (RN18).
+      operationId: atualizarPreferencias
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreferenciasUpdate' }
+            example: { tema: escuro, tamanhoTexto: 1.2 }
+      responses:
+        '200':
+          description: Preferências atualizadas.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preferencias' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '422':
+          $ref: '#/components/responses/ErroValidacao'
+
+  # ============================================================
+  # CATÁLOGO
+  # ============================================================
+  /objetivos:
+    get:
+      tags: [Catálogo]
+      summary: Listar objetivos e suas categorias
+      description: Etapa 1 do fluxo de configuração ("Qual é o seu objetivo?").
+      operationId: listarObjetivos
+      responses:
+        '200':
+          description: Catálogo completo.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Objetivo' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  /objetivos/{idObjetivo}:
+    get:
+      tags: [Catálogo]
+      summary: Obter um objetivo
+      operationId: obterObjetivo
+      parameters:
+        - $ref: '#/components/parameters/IdObjetivo'
+      responses:
+        '200':
+          description: Objetivo encontrado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Objetivo' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+
+  /objetivos/{idObjetivo}/categorias:
+    get:
+      tags: [Catálogo]
+      summary: Listar categorias de um objetivo
+      description: Etapa 2 do fluxo ("Qual categoria você quer?").
+      operationId: listarCategorias
+      parameters:
+        - $ref: '#/components/parameters/IdObjetivo'
+      responses:
+        '200':
+          description: Categorias do objetivo.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Categoria' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+
+  # ============================================================
+  # SESSÕES
+  # ============================================================
+  /sessoes:
+    post:
+      tags: [Sessões]
+      summary: Confirmar e iniciar uma sessão
+      description: |
+        Equivale ao botão **Confirmar e entrar** (etapa 3). Valida:
+        - a categoria pertence ao objetivo (RN04);
+        - `1 ≤ duracaoSegundos ≤ 10800` (RN01);
+        - não existe outra sessão ativa para o usuário (RN06).
+
+        A escolha confirmada passa a ser a sugestão retornada por
+        `GET /sessoes/sugestao`.
+      operationId: iniciarSessao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IniciarSessaoRequest' }
+      responses:
+        '201':
+          description: Sessão iniciada.
+          headers:
+            Location:
+              description: URL da sessão criada.
+              schema: { type: string, example: /api/v1/sessoes/7f3c2a10-1b2c-4d5e-8f90-123456789abc }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sessao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '409':
+          description: Já existe uma sessão ativa (RN06).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+              example: { codigo: SESSAO_ATIVA_EXISTENTE, mensagem: Já existe uma sessão em andamento. }
+        '422':
+          description: Categoria incompatível ou duração fora do intervalo.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErroValidacao' }
+              examples:
+                categoriaIncompativel:
+                  summary: Categoria de outro objetivo (RN04)
+                  value:
+                    codigo: VALIDACAO
+                    mensagem: Dados inválidos.
+                    campos:
+                      - { campo: idCategoria, mensagem: A categoria não pertence ao objetivo escolhido. }
+                duracaoInvalida:
+                  summary: Duração acima de 3 horas (RN01)
+                  value:
+                    codigo: VALIDACAO
+                    mensagem: Dados inválidos.
+                    campos:
+                      - { campo: duracaoSegundos, mensagem: O máximo permitido é 3 horas. }
+    get:
+      tags: [Sessões]
+      summary: Histórico de sessões
+      operationId: listarSessoes
+      parameters:
+        - name: estado
+          in: query
+          description: Filtra pelo estado da sessão.
+          schema: { $ref: '#/components/schemas/EstadoSessao' }
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/TamanhoPagina'
+      responses:
+        '200':
+          description: Página do histórico, da mais recente para a mais antiga.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaSessoes' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  /sessoes/ativa:
+    get:
+      tags: [Sessões]
+      summary: Obter a sessão ativa
+      description: |
+        Usado ao abrir o app e ao voltar do segundo plano para revalidar o
+        tempo restante (equivalente a `ControleObjetivos.verificar()`).
+        Se a sessão tiver acabado de expirar, retorna `404` e o app exibe a
+        tela de bloqueio "Seu tempo acabou!".
+      operationId: obterSessaoAtiva
+      responses:
+        '200':
+          description: Sessão em andamento.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sessao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          description: Nenhuma sessão ativa.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erro' }
+              example: { codigo: SEM_SESSAO_ATIVA, mensagem: Nenhuma sessão em andamento. }
+
+  /sessoes/sugestao:
+    get:
+      tags: [Sessões]
+      summary: Sugestão baseada na última sessão
+      description: |
+        Substitui as chaves locais `hist_objetivo_id`, `hist_categoria_id` e
+        `hist_duracao_s`. Campos que deixaram de ser válidos (objetivo
+        removido do catálogo, duração fora do intervalo) retornam `null`.
+      operationId: obterSugestao
+      responses:
+        '200':
+          description: Sugestão (todos os campos nulos no primeiro uso).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sugestao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  /sessoes/{idSessao}:
+    get:
+      tags: [Sessões]
+      summary: Obter uma sessão
+      operationId: obterSessao
+      parameters:
+        - $ref: '#/components/parameters/IdSessao'
+      responses:
+        '200':
+          description: Sessão encontrada.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sessao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+
+  # ============================================================
+  # NOTIFICAÇÕES
+  # ============================================================
+  /notificacoes:
+    get:
+      tags: [Notificações]
+      summary: Listar notificações
+      description: Filtros "Todas" e "Não lidas" da central de notificações.
+      operationId: listarNotificacoes
+      parameters:
+        - name: filtro
+          in: query
+          schema:
+            type: string
+            enum: [todas, nao_lidas]
+            default: todas
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/TamanhoPagina'
+      responses:
+        '200':
+          description: Notificações (mais recentes primeiro) e contador de não lidas.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaNotificacoes' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  /notificacoes/marcar-todas-lidas:
+    post:
+      tags: [Notificações]
+      summary: Marcar todas como lidas
+      operationId: marcarTodasComoLidas
+      responses:
+        '200':
+          description: Quantidade de notificações alteradas.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [atualizadas]
+                properties:
+                  atualizadas: { type: integer, minimum: 0, example: 3 }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+
+  /notificacoes/{idNotificacao}:
+    patch:
+      tags: [Notificações]
+      summary: Marcar uma notificação como lida/não lida
+      operationId: atualizarNotificacao
+      parameters:
+        - $ref: '#/components/parameters/IdNotificacao'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lida]
+              properties:
+                lida: { type: boolean, example: true }
+      responses:
+        '200':
+          description: Notificação atualizada.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Notificacao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+    delete:
+      tags: [Notificações]
+      summary: Remover notificação
+      description: |
+        Remoção lógica (gesto lateral). Pode ser desfeita com
+        `POST /notificacoes/{idNotificacao}/restaurar` (RN19).
+      operationId: removerNotificacao
+      parameters:
+        - $ref: '#/components/parameters/IdNotificacao'
+      responses:
+        '204':
+          description: Notificação removida.
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+
+  /notificacoes/{idNotificacao}/restaurar:
+    post:
+      tags: [Notificações]
+      summary: Desfazer remoção
+      description: Restaura uma notificação removida (botão "Desfazer", RN19).
+      operationId: restaurarNotificacao
+      parameters:
+        - $ref: '#/components/parameters/IdNotificacao'
+      responses:
+        '200':
+          description: Notificação restaurada.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Notificacao' }
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+
+# ============================================================
+# COMPONENTES
+# ============================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdObjetivo:
+      name: idObjetivo
+      in: path
+      required: true
+      schema: { $ref: '#/components/schemas/IdObjetivo' }
+    IdSessao:
+      name: idSessao
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IdNotificacao:
+      name: idNotificacao
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    Pagina:
+      name: pagina
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    TamanhoPagina:
+      name: tamanho
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+
+  responses:
+    NaoAutenticado:
+      description: Token ausente, inválido ou expirado.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erro' }
+          example: { codigo: NAO_AUTENTICADO, mensagem: Faça login para continuar. }
+    NaoEncontrado:
+      description: Recurso não encontrado.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erro' }
+          example: { codigo: NAO_ENCONTRADO, mensagem: Recurso não encontrado. }
+    ErroValidacao:
+      description: Um ou mais campos são inválidos.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErroValidacao' }
+          example:
+            codigo: VALIDACAO
+            mensagem: Preencha todos os campos corretamente
+            campos:
+              - { campo: email, mensagem: Informe um e-mail válido. }
+
+  schemas:
+    # ---------------- Erros e mensagens ----------------
+    Erro:
+      type: object
+      required: [codigo, mensagem]
+      properties:
+        codigo:
+          type: string
+          description: Código estável para tratamento no app.
+          example: NAO_ENCONTRADO
+        mensagem:
+          type: string
+          description: Mensagem pronta para exibir ao usuário (SnackBar).
+          example: Recurso não encontrado.
+    ErroValidacao:
+      allOf:
+        - $ref: '#/components/schemas/Erro'
+        - type: object
+          properties:
+            campos:
+              type: array
+              items:
+                type: object
+                required: [campo, mensagem]
+                properties:
+                  campo: { type: string, example: email }
+                  mensagem: { type: string, example: Informe um e-mail válido. }
+    Mensagem:
+      type: object
+      required: [mensagem]
+      properties:
+        mensagem:
+          type: string
+          example: Se o e-mail estiver cadastrado, você receberá um link de redefinição.
+
+    # ---------------- Autenticação ----------------
+    Email:
+      type: string
+      format: email
+      maxLength: 254
+      example: ana@email.com
+    Senha:
+      type: string
+      format: password
+      minLength: 8
+      maxLength: 128
+      writeOnly: true
+      example: S3nh@Forte
+    CadastroRequest:
+      type: object
+      required: [nome, email, senha, confirmacaoSenha]
+      properties:
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Ana Souza
+        email: { $ref: '#/components/schemas/Email' }
+        senha: { $ref: '#/components/schemas/Senha' }
+        confirmacaoSenha:
+          allOf: [{ $ref: '#/components/schemas/Senha' }]
+          description: Deve ser igual a `senha` ("As senhas não coincidem").
+        aceiteTermos:
+          type: boolean
+          description: Aceite dos Termos de Uso e da Política de Privacidade (LGPD).
+          example: true
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email: { $ref: '#/components/schemas/Email' }
+        senha:
+          type: string
+          format: password
+          writeOnly: true
+          example: S3nh@Forte
+        lembrar:
+          type: boolean
+          default: false
+          description: Opção "Remember me" — emite um refresh token de longa duração.
+    LoginSocialRequest:
+      type: object
+      required: [tokenProvedor]
+      properties:
+        tokenProvedor:
+          type: string
+          description: ID token (Google) ou access token (Facebook).
+          example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ij...
+    RecuperarSenhaRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { $ref: '#/components/schemas/Email' }
+    AuthResponse:
+      type: object
+      required: [token, tipo, expiraEm, usuario]
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        tipo:
+          type: string
+          enum: [Bearer]
+        expiraEm:
+          type: integer
+          description: Validade do token em segundos.
+          example: 3600
+        refreshToken:
+          type: string
+          nullable: true
+          description: Presente quando `lembrar` = true.
+        usuario: { $ref: '#/components/schemas/Usuario' }
+
+    # ---------------- Usuário ----------------
+    Usuario:
+      type: object
+      required: [id, nome, email, usuario, criadoEm]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        nome:
+          type: string
+          example: Ana Souza
+        email: { $ref: '#/components/schemas/Email' }
+        usuario:
+          type: string
+          readOnly: true
+          description: '@usuário derivado do nome (minúsculas, sem espaços).'
+          example: anasouza
+        fotoUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: https://cdn.ikai.example/fotos/3fa85f64.jpg
+        criadoEm:
+          type: string
+          format: date-time
+          readOnly: true
+    AtualizarPerfilRequest:
+      type: object
+      required: [nome, email]
+      properties:
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 100
+          description: '"O nome deve ter pelo menos 2 caracteres."'
+          example: Ana Souza
+        email: { $ref: '#/components/schemas/Email' }
+    AlterarSenhaRequest:
+      type: object
+      required: [senhaAtual, novaSenha]
+      properties:
+        senhaAtual:
+          type: string
+          format: password
+          writeOnly: true
+        novaSenha: { $ref: '#/components/schemas/Senha' }
+    ConfirmarSenhaRequest:
+      type: object
+      required: [senha]
+      properties:
+        senha:
+          type: string
+          format: password
+          writeOnly: true
+
+    # ---------------- Preferências ----------------
+    Tema:
+      type: string
+      enum: [claro, escuro, sistema]
+      description: Corresponde a `ThemeMode.light`, `ThemeMode.dark` e `ThemeMode.system`.
+    PreferenciasUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        tema: { $ref: '#/components/schemas/Tema' }
+        altoContraste: { type: boolean }
+        tamanhoTexto:
+          type: number
+          format: float
+          minimum: 0.8
+          maximum: 1.4
+          description: Fator de escala do texto (RN18).
+        notificacoes:
+          type: boolean
+          description: Chave geral. Se `false`, os lembretes também ficam desativados.
+        lembretesEstudo: { type: boolean }
+        sons: { type: boolean }
+        vibracao: { type: boolean }
+    Preferencias:
+      allOf:
+        - $ref: '#/components/schemas/PreferenciasUpdate'
+        - type: object
+          required: [tema, altoContraste, tamanhoTexto, notificacoes, lembretesEstudo, sons, vibracao]
+      example:
+        tema: claro
+        altoContraste: false
+        tamanhoTexto: 1.0
+        notificacoes: true
+        lembretesEstudo: true
+        sons: true
+        vibracao: false
+
+    # ---------------- Catálogo ----------------
+    IdObjetivo:
+      type: string
+      enum: [ver_conteudo, ler, estudar]
+      example: estudar
+    Categoria:
+      type: object
+      required: [id, idObjetivo, titulo, icone]
+      properties:
+        id:
+          type: string
+          description: Prefixado pelo objetivo (`ver_`, `ler_`, `estudar_`).
+          example: estudar_matematica
+        idObjetivo: { $ref: '#/components/schemas/IdObjetivo' }
+        titulo:
+          type: string
+          example: Matemática
+        icone:
+          type: string
+          description: Nome do ícone Material usado pelo app.
+          example: calculate_outlined
+    Objetivo:
+      type: object
+      required: [id, titulo, icone, categorias]
+      properties:
+        id: { $ref: '#/components/schemas/IdObjetivo' }
+        titulo:
+          type: string
+          example: Estudar
+        icone:
+          type: string
+          example: school_outlined
+        categorias:
+          type: array
+          items: { $ref: '#/components/schemas/Categoria' }
+      example:
+        id: ler
+        titulo: Ler
+        icone: menu_book_outlined
+        categorias:
+          - { id: ler_romance, idObjetivo: ler, titulo: Romance, icone: favorite_border }
+          - { id: ler_religioso, idObjetivo: ler, titulo: Religioso, icone: menu_book_outlined }
+
+    # ---------------- Sessões ----------------
+    EstadoSessao:
+      type: string
+      enum: [ativa, expirada]
+      description: |
+        `ativa`: dentro do tempo; `expirada`: estado terminal após o fim da
+        duração (o estado `naoIniciada` existe apenas no app, antes da confirmação).
+    DuracaoSegundos:
+      type: integer
+      minimum: 1
+      maximum: 10800
+      description: Duração em segundos, de 1 s a 3 h (RN01).
+      example: 1800
+    IniciarSessaoRequest:
+      type: object
+      required: [idObjetivo, idCategoria, duracaoSegundos]
+      properties:
+        idObjetivo: { $ref: '#/components/schemas/IdObjetivo' }
+        idCategoria:
+          type: string
+          example: estudar_matematica
+        duracaoSegundos: { $ref: '#/components/schemas/DuracaoSegundos' }
+    Sessao:
+      type: object
+      required: [id, idObjetivo, idCategoria, duracaoSegundos, iniciadaEm, expiraEm, restanteSegundos, estado]
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 7f3c2a10-1b2c-4d5e-8f90-123456789abc
+        idObjetivo: { $ref: '#/components/schemas/IdObjetivo' }
+        idCategoria:
+          type: string
+          example: estudar_matematica
+        duracaoSegundos: { $ref: '#/components/schemas/DuracaoSegundos' }
+        iniciadaEm:
+          type: string
+          format: date-time
+          example: '2026-11-11T14:00:00Z'
+        expiraEm:
+          type: string
+          format: date-time
+          description: '`iniciadaEm + duracaoSegundos`.'
+          example: '2026-11-11T14:30:00Z'
+        restanteSegundos:
+          type: integer
+          minimum: 0
+          description: Calculado pelo servidor no momento da resposta (RN07).
+          example: 1795
+        estado: { $ref: '#/components/schemas/EstadoSessao' }
+    Sugestao:
+      type: object
+      required: [idObjetivo, idCategoria, duracaoSegundos]
+      properties:
+        idObjetivo:
+          type: string
+          enum: [ver_conteudo, ler, estudar, null]
+          nullable: true
+          example: estudar
+        idCategoria:
+          type: string
+          nullable: true
+          example: estudar_matematica
+        duracaoSegundos:
+          type: integer
+          minimum: 1
+          maximum: 10800
+          nullable: true
+          example: 240
+    Paginacao:
+      type: object
+      required: [pagina, tamanho, total]
+      properties:
+        pagina: { type: integer, example: 1 }
+        tamanho: { type: integer, example: 20 }
+        total: { type: integer, example: 42 }
+    PaginaSessoes:
+      allOf:
+        - $ref: '#/components/schemas/Paginacao'
+        - type: object
+          required: [itens]
+          properties:
+            itens:
+              type: array
+              items: { $ref: '#/components/schemas/Sessao' }
+
+    # ---------------- Notificações ----------------
+    TipoNotificacao:
+      type: string
+      enum: [lembrete, conquista, comunidade, sistema]
+    Notificacao:
+      type: object
+      required: [id, tipo, titulo, descricao, criadaEm, lida]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        tipo: { $ref: '#/components/schemas/TipoNotificacao' }
+        titulo:
+          type: string
+          example: Hora de respirar
+        descricao:
+          type: string
+          example: Que tal 10 minutos de respiração para cultivar calma?
+        criadaEm:
+          type: string
+          format: date-time
+          description: O app agrupa em "Hoje", "Ontem" e "Anteriores" a partir desta data.
+          example: '2026-11-11T13:40:00Z'
+        lida:
+          type: boolean
+          example: false
+    PaginaNotificacoes:
+      allOf:
+        - $ref: '#/components/schemas/Paginacao'
+        - type: object
+          required: [itens, naoLidas]
+          properties:
+            naoLidas:
+              type: integer
+              minimum: 0
+              description: Total de notificações não lidas (contador da tela).
+              example: 3
+            itens:
+              type: array
+              items: { $ref: '#/components/schemas/Notificacao' }
