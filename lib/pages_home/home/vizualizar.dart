@@ -78,11 +78,6 @@ class PraticasPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(
-                    Icons.spa_outlined,
-                    color: c.laranja,
-                    size: 27,
-                  ),
                 ],
               ),
             ),

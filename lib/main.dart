@@ -51,6 +51,17 @@ import './tema.dart' hide AparenciaController, AparenciaTemas;
 
 /*--------------------------------------*/
 
+import './pages_home/explorar/explorar.dart';
+import './pages_home/explorar/explorar_controller.dart';
+import './pages_home/explorar/explorar_estilo.dart';
+import './pages_home/explorar/explorar_fonte.dart';
+import './pages_home/explorar/explorar_model.dart';
+import './pages_home/progresso.dart';
+import './pages_home/explorar/videos_player_page.dart';
+
+
+/*--------------------------------------*/
+
 void main() {
   runApp(
     DevicePreview(

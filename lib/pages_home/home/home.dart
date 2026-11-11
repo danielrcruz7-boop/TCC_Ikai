@@ -10,7 +10,7 @@ import './vizualizar.dart';
 import '../comunidade.dart';
 import '../perfil/perfil.dart';
 import '../progresso.dart';
-import '../explorar.dart';
+import '../explorar/explorar.dart';
 
 import '../perfil/perfil.dart';
 
@@ -145,29 +145,6 @@ void vizualizar() {
       ),
     ),
 
-    const SizedBox(width: 8),
-
-    // Botão sustentabilidade
-    SizedBox(
-      width: 42,
-      height: 42,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFEAF2EC),
-          foregroundColor: const Color(0xFF4B7F5A),
-          elevation: 0,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: const Icon(
-          Icons.eco_outlined,
-          size: 28,
-        ),
-      ),
-    ),
 
     const SizedBox(width: 8),
 

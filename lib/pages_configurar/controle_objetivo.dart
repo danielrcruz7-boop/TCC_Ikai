@@ -78,6 +78,15 @@ Objetivo? buscarObjetivo(String? id) {
   return null;
 }
 
+/// Objetivo + categoria que o Explorar usa para montar o feed.
+/// Só existe quando a categoria pertence ao objetivo (ver
+/// `ControleObjetivos.preferenciaConteudo`).
+class PreferenciaConteudo {
+  final Objetivo objetivo;
+  final Categoria categoria;
+  const PreferenciaConteudo({required this.objetivo, required this.categoria});
+}
+
 // =====================================================
 // DURAÇÃO (VALIDAÇÃO NA LÓGICA, NÃO SÓ NA INTERFACE)
 // =====================================================
@@ -105,7 +114,9 @@ String formatarDuracao(int s) {
 enum EstadoSessao { naoIniciada, ativa, expirada }
 
 /// Fonte de verdade de tudo. Escolhas e sessão ficam só em memória;
-/// apenas o histórico (sugestões) é gravado no aparelho.
+/// no aparelho são gravados o histórico (sugestões) e a preferência atual
+/// de conteúdo (objetivo + categoria usados pelo Explorar). Os dois são
+/// independentes e usam chaves diferentes.
 class ControleObjetivos extends ChangeNotifier {
   ControleObjetivos._();
   static final ControleObjetivos instance = ControleObjetivos._();
@@ -113,6 +124,10 @@ class ControleObjetivos extends ChangeNotifier {
   static const _kObjetivo = 'hist_objetivo_id';
   static const _kCategoria = 'hist_categoria_id';
   static const _kDuracao = 'hist_duracao_s';
+
+  // Preferência atual do Explorar (NÃO é o histórico de sugestões).
+  static const _kPrefObjetivo = 'pref_objetivo_id';
+  static const _kPrefCategoria = 'pref_categoria_id';
 
   // ---------- Escolhas do ciclo atual (sempre começam vazias) ----------
   int etapa = 0; // 0 objetivo, 1 categoria, 2 duração
@@ -167,6 +182,67 @@ class ControleObjetivos extends ChangeNotifier {
   int? get sugestaoDuracao {
     final d = _hDuracao;
     return (d != null && duracaoValida(d)) ? d : null;
+  }
+
+  // ---------- Preferência atual (alimenta o Explorar) ----------
+  // O histórico acima só gera "sugestões" no fluxo de escolha. Já a
+  // preferência é o que o usuário escolheu por último e é o que o Explorar
+  // usa. Nada aqui toca em cronômetro, duração ou estado da sessão.
+  bool preferenciaCarregada = false;
+  String? _pObjetivo;
+  String? _pCategoria;
+
+  /// Lê a preferência gravada. Pode ser chamado várias vezes (só lê uma vez).
+  Future<void> carregarPreferencia() async {
+    if (preferenciaCarregada) return;
+    String? o;
+    String? c;
+    try {
+      final p = await SharedPreferences.getInstance();
+      o = p.getString(_kPrefObjetivo);
+      c = p.getString(_kPrefCategoria);
+    } catch (_) {
+      // Falha de leitura nunca impede o uso.
+    }
+    // Se uma escolha foi confirmada enquanto líamos, a memória é mais nova.
+    if (preferenciaCarregada) return;
+    _pObjetivo = o;
+    _pCategoria = c;
+    preferenciaCarregada = true;
+    notifyListeners();
+  }
+
+  Future<void> _salvarPreferencia(String o, String c) async {
+    // Memória primeiro (parte síncrona): quem ler em seguida já vê o novo valor.
+    _pObjetivo = o;
+    _pCategoria = c;
+    preferenciaCarregada = true;
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString(_kPrefObjetivo, o);
+      await p.setString(_kPrefCategoria, c);
+    } catch (_) {
+      // Falha ao gravar não impede o uso.
+    }
+  }
+
+  /// Preferência válida, ou null se faltar algo ou se a categoria gravada
+  /// não pertencer ao objetivo gravado (dados ausentes ou inválidos).
+  PreferenciaConteudo? get preferenciaConteudo {
+    final o = buscarObjetivo(_pObjetivo);
+    final c = o?.buscarCategoria(_pCategoria);
+    if (o == null || c == null) return null;
+    return PreferenciaConteudo(objetivo: o, categoria: c);
+  }
+
+  /// Para uma futura tela de configurações trocar objetivo/categoria sem
+  /// iniciar nova sessão. Valida, grava e avisa os ouvintes (o Explorar
+  /// acompanha sozinho). Não mexe na sessão em andamento.
+  Future<bool> atualizarPreferenciaConteudo(Objetivo o, Categoria c) async {
+    if (o.buscarCategoria(c.id) == null) return false;
+    await _salvarPreferencia(o.id, c.id);
+    notifyListeners();
+    return true;
   }
 
   // ---------- Ações de escolha (sempre explícitas) ----------
@@ -239,6 +315,9 @@ class ControleObjetivos extends ChangeNotifier {
 
     _confirmando = true;
     await _salvarHistorico(o.id, c.id, s);
+    // Sem await: a parte síncrona já atualiza a memória e a gravação em disco
+    // segue em paralelo, então o início da sessão não é atrasado.
+    unawaited(_salvarPreferencia(o.id, c.id));
     _iniciar(s);
     _confirmando = false;
     return true;

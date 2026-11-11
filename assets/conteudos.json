@@ -1,0 +1,119 @@
+{
+  "_ajuda": [
+    "Catálogo do Explorar. Cadastre SOMENTE conteúdos reais que você tem direito de usar.",
+    "Chaves que começam com _ são ignoradas. Itens inválidos ou com id repetido são ignorados.",
+    "objetivo: estudar | ler | ver_conteudo. categoria: o id da categoria dentro do objetivo (ex.: estudar_matematica).",
+    "tipo: video | dica | material | exercicio.",
+    "VIDEO do YouTube: provedor=youtube e videoId com os 11 caracteres do vídeo (exibido pelo player incorporado oficial).",
+    "VIDEO em arquivo: provedor=arquivo e urlVideo com endereço https (mp4 ou HLS) que você tenha permissão para usar.",
+    "Vídeo exige duracaoSegundos (> 0). Curto: até 300 s. Aula completa: 600 s ou mais.",
+    "dica, material e exercicio exigem corpo (o texto que será exibido).",
+    "Opcionais: descricao, fonte (canal ou autor), miniatura (https), tags (lista), destaque (true/false)."
+  ],
+  "_exemplo_NAO_E_CARREGADO": {
+    "id": "mat-0001",
+    "objetivo": "estudar",
+    "categoria": "estudar_matematica",
+    "tipo": "video",
+    "provedor": "youtube",
+    "videoId": "COLE_AQUI_11_CHARS",
+    "titulo": "Título do vídeo",
+    "descricao": "Descrição curta.",
+    "duracaoSegundos": 300,
+    "fonte": "Nome do canal",
+    "tags": ["equações", "matemática básica"]
+  },
+  "conteudos": [
+    
+    {
+      "id": "geo-001",
+      "objetivo": "estudar",
+      "categoria": "estudar_geografia",
+      "tipo": "dica",
+      "titulo": "Conhecendo os continentes",
+      "descricao": "Aprenda quais são os continentes e suas características.",
+      "corpo": "A Terra possui seis continentes tradicionalmente considerados no modelo geográfico mais utilizado no Brasil: América, África, Europa, Ásia, Oceania e Antártida.\n\nAMÉRICA: possui grande diversidade de paisagens, culturas e climas.\n\nÁFRICA: é conhecida por sua diversidade cultural e por paisagens como o deserto do Saara.\n\nEUROPA: apresenta grande diversidade histórica, cultural e econômica.\n\nÁSIA: é o maior continente em extensão territorial e população.\n\nOCEANIA: reúne a Austrália, a Nova Zelândia e diversas ilhas do Pacífico.\n\nANTÁRTIDA: é o continente mais frio do planeta e possui grandes áreas cobertas de gelo.\n\nPARA REFLETIR: em qual continente está localizado o Brasil?",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "geo-002",
+      "objetivo": "estudar",
+      "categoria": "estudar_geografia",
+      "tipo": "material",
+      "titulo": "O que é clima e tempo?",
+      "descricao": "Entenda a diferença entre as condições do dia e o clima de uma região.",
+      "corpo": "TEMPO ATMOSFÉRICO: representa as condições da atmosfera em determinado momento. Por exemplo: hoje está chovendo, amanhã pode fazer sol.\n\nCLIMA: representa o comportamento habitual das condições atmosféricas de uma região observado durante longos períodos.\n\nELEMENTOS DO CLIMA:\n\n1. Temperatura: indica o quanto o ar está quente ou frio.\n2. Umidade: quantidade de vapor de água presente no ar.\n3. Pressão atmosférica: força exercida pelo peso do ar.\n4. Ventos: movimentação do ar.\n5. Precipitação: água que cai da atmosfera, como chuva, neve ou granizo.\n\nEXEMPLO: dizer que hoje está fazendo 30 graus é falar sobre o tempo. Dizer que uma região possui clima tropical é falar sobre seu clima.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "geo-003",
+      "objetivo": "estudar",
+      "categoria": "estudar_geografia",
+      "tipo": "exercicio",
+      "titulo": "Orientação e pontos cardeais",
+      "descricao": "Aprenda a identificar as direções e se localizar no espaço.",
+      "corpo": "Os pontos cardeais são utilizados para orientação geográfica.\n\nNORTE (N): direção de referência indicada nas partes superiores da maioria dos mapas.\n\nSUL (S): direção oposta ao norte.\n\nLESTE (L): direção em que o Sol nasce aproximadamente.\n\nOESTE (O): direção em que o Sol se põe aproximadamente.\n\nEXEMPLO PRÁTICO:\nImagine que você está olhando para o norte. O leste estará à sua direita e o oeste à sua esquerda.\n\nDESAFIO:\n1. Qual ponto cardeal é oposto ao norte?\n2. Em qual direção o Sol nasce aproximadamente?\n3. Qual direção fica à sua esquerda quando você olha para o norte?\n\nRESPOSTAS: 1. Sul. 2. Leste. 3. Oeste.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "mat-001",
+      "objetivo": "estudar",
+      "categoria": "estudar_matematica",
+      "tipo": "material",
+      "titulo": "Aprendendo a somar",
+      "descricao": "Entenda a adição com exemplos simples do cotidiano.",
+      "corpo": "A ADIÇÃO é uma operação matemática utilizada para juntar quantidades.\n\nSÍMBOLO: +\n\nEXEMPLO 1:\n3 + 2 = 5\nSe você tem 3 maçãs e recebe mais 2, passa a ter 5 maçãs.\n\nEXEMPLO 2:\n10 + 5 = 15\n\nEXEMPLO 3:\n24 + 13 = 37\n\nCOMO FAZER:\n24 + 13\nPrimeiro somamos as unidades: 4 + 3 = 7.\nDepois somamos as dezenas: 2 + 1 = 3.\nResultado: 37.\n\nPRATIQUE:\n1. 5 + 4 = ?\n2. 12 + 8 = ?\n3. 25 + 15 = ?\n\nRESPOSTAS: 1. 9. 2. 20. 3. 40.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "mat-002",
+      "objetivo": "estudar",
+      "categoria": "estudar_matematica",
+      "tipo": "material",
+      "titulo": "Subtração sem complicação",
+      "descricao": "Aprenda a retirar quantidades e calcular diferenças.",
+      "corpo": "A SUBTRAÇÃO é utilizada quando queremos retirar uma quantidade ou descobrir a diferença entre dois valores.\n\nSÍMBOLO: -\n\nEXEMPLO 1:\n8 - 3 = 5\nSe você tem 8 balas e entrega 3, ficam 5 balas.\n\nEXEMPLO 2:\n15 - 7 = 8\n\nEXEMPLO 3:\n35 - 12 = 23\n\nCOMO FAZER:\n35 - 12\nUnidades: 5 - 2 = 3.\nDezenas: 3 - 1 = 2.\nResultado: 23.\n\nPRATIQUE:\n1. 9 - 4 = ?\n2. 20 - 8 = ?\n3. 50 - 25 = ?\n\nRESPOSTAS: 1. 5. 2. 12. 3. 25.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "mat-003",
+      "objetivo": "estudar",
+      "categoria": "estudar_matematica",
+      "tipo": "exercicio",
+      "titulo": "Multiplicação e divisão na prática",
+      "descricao": "Aprenda a multiplicar e dividir com situações do cotidiano.",
+      "corpo": "MULTIPLICAÇÃO:\nÉ uma forma de somar o mesmo número várias vezes.\n\nEXEMPLO:\n4 x 3 = 12\nIsso significa somar 4 três vezes: 4 + 4 + 4 = 12.\n\nOUTRO EXEMPLO:\n5 x 6 = 30.\n\nDIVISÃO:\nÉ utilizada para repartir uma quantidade em partes iguais.\n\nEXEMPLO:\n12 ÷ 3 = 4.\nSe você divide 12 balas igualmente entre 3 pessoas, cada uma recebe 4.\n\nOUTRO EXEMPLO:\n20 ÷ 5 = 4.\n\nPRATIQUE:\n1. 3 x 4 = ?\n2. 7 x 5 = ?\n3. 18 ÷ 3 = ?\n4. 24 ÷ 6 = ?\n\nRESPOSTAS: 1. 12. 2. 35. 3. 6. 4. 4.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "ing-001",
+      "objetivo": "estudar",
+      "categoria": "estudar_ingles",
+      "tipo": "material",
+      "titulo": "Primeira conversa em inglês",
+      "descricao": "Aprenda a cumprimentar alguém e iniciar uma conversa.",
+      "corpo": "EXPRESSÕES BÁSICAS:\n\nHello! = Olá!\nHi! = Oi!\nGood morning! = Bom dia!\nGood afternoon! = Boa tarde!\nGood evening! = Boa noite! (cumprimento)\nHow are you? = Como você está?\nI'm fine, thanks. = Estou bem, obrigado(a).\nAnd you? = E você?\nNice to meet you! = Prazer em conhecer você!\n\nEXEMPLO DE CONVERSA:\n\nAnna: Hello! How are you?\nTradução: Olá! Como você está?\n\nJohn: Hi! I'm fine, thanks. And you?\nTradução: Oi! Estou bem, obrigado. E você?\n\nAnna: I'm great! Nice to meet you!\nTradução: Estou ótima! Prazer em conhecer você!\n\nJohn: Nice to meet you too!\nTradução: Prazer em conhecer você também!\n\nDICA: pratique falando as frases em voz alta para desenvolver sua pronúncia.",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "ing-002",
+      "objetivo": "estudar",
+      "categoria": "estudar_ingles",
+      "tipo": "material",
+      "titulo": "Inglês para situações do dia a dia",
+      "descricao": "Conheça frases úteis para conversar em diferentes situações.",
+      "corpo": "NO DIA A DIA:\n\nWhat's your name? = Qual é o seu nome?\nMy name is Lucas. = Meu nome é Lucas.\nWhere are you from? = De onde você é?\nI'm from Brazil. = Eu sou do Brasil.\nHow old are you? = Quantos anos você tem?\nI'm 20 years old. = Tenho 20 anos.\nWhat do you do? = O que você faz?\nI am a student. = Eu sou estudante.\n\nNA HORA DE PEDIR ALGO:\n\nCan I have some water, please? = Posso tomar um pouco de água, por favor?\nHow much is it? = Quanto custa?\nThank you! = Obrigado(a)!\nYou're welcome! = De nada!\n\nEXEMPLO DE CONVERSA:\n\nCustomer: How much is this book?\nTradução: Quanto custa este livro?\n\nSeller: It is ten dollars.\nTradução: Custa dez dólares.\n\nCustomer: Thank you!\nTradução: Obrigado(a)!\n\nSeller: You're welcome!\nTradução: De nada!",
+      "fonte": "Ikai"
+    },
+    {
+      "id": "ing-003",
+      "objetivo": "estudar",
+      "categoria": "estudar_ingles",
+      "tipo": "exercicio",
+      "titulo": "Construindo frases em inglês",
+      "descricao": "Aprenda a formar frases simples e pratique novas palavras.",
+      "corpo": "ESTRUTURA BÁSICA:\n\nEm frases afirmativas simples, uma estrutura comum é:\nSUJEITO + VERBO + COMPLEMENTO.\n\nEXEMPLOS:\n\nI like music. = Eu gosto de música.\nI study English. = Eu estudo inglês.\nShe likes coffee. = Ela gosta de café.\nHe plays soccer. = Ele joga futebol.\nWe are friends. = Nós somos amigos.\n\nPERGUNTAS ÚTEIS:\n\nDo you like music? = Você gosta de música?\nWhere do you live? = Onde você mora?\nWhat is your favorite food? = Qual é sua comida favorita?\n\nMINI CONVERSA:\n\nMaria: Do you like music?\nTradução: Você gosta de música?\n\nPeter: Yes, I do. I love music!\nTradução: Sim. Eu adoro música!\n\nMaria: What is your favorite song?\nTradução: Qual é sua música favorita?\n\nPeter: I don't have a favorite song.\nTradução: Eu não tenho uma música favorita.\n\nDESAFIO: tente escrever em inglês: Eu estudo inglês todos os dias.\n\nRESPOSTA: I study English every day.",
+      "fonte": "Ikai"
+    }
+  ]
+}
