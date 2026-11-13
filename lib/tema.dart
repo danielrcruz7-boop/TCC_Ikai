@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 
 class YkaiCores extends ThemeExtension<YkaiCores> {
   final Color fundo;
@@ -26,10 +26,9 @@ class YkaiCores extends ThemeExtension<YkaiCores> {
     required this.verdeClaro,
   });
 
-  /// Cores originais do Ikai.
-  static const YkaiCores claro = YkaiCores(
+  static const claro = YkaiCores(
     fundo: Color(0xFFFDFBF7),
-    cartao: Color(0xFFFFFFFF),
+    cartao: Colors.white,
     texto: Color(0xFF243044),
     textoSecundario: Color(0xFF757575),
     textoSuave: Color(0xFF9E9E9E),
@@ -40,7 +39,7 @@ class YkaiCores extends ThemeExtension<YkaiCores> {
     verdeClaro: Color(0xFFEAF2EC),
   );
 
-  static const YkaiCores escuro = YkaiCores(
+  static const escuro = YkaiCores(
     fundo: Color(0xFF14171C),
     cartao: Color(0xFF1E232B),
     texto: Color(0xFFEDEFF2),
@@ -53,10 +52,10 @@ class YkaiCores extends ThemeExtension<YkaiCores> {
     verdeClaro: Color(0xFF22332A),
   );
 
-  static const YkaiCores claroContraste = YkaiCores(
-    fundo: Color(0xFFFFFFFF),
-    cartao: Color(0xFFFFFFFF),
-    texto: Color(0xFF000000),
+  static const claroContraste = YkaiCores(
+    fundo: Colors.white,
+    cartao: Colors.white,
+    texto: Colors.black,
     textoSecundario: Color(0xFF333333),
     textoSuave: Color(0xFF595959),
     borda: Color(0xFF595959),
@@ -66,10 +65,10 @@ class YkaiCores extends ThemeExtension<YkaiCores> {
     verdeClaro: Color(0xFFDCEFE1),
   );
 
-  static const YkaiCores escuroContraste = YkaiCores(
-    fundo: Color(0xFF000000),
+  static const escuroContraste = YkaiCores(
+    fundo: Colors.black,
     cartao: Color(0xFF0D0D0D),
-    texto: Color(0xFFFFFFFF),
+    texto: Colors.white,
     textoSecundario: Color(0xFFE3E7ED),
     textoSuave: Color(0xFFBFC6D1),
     borda: Color(0xFF9AA3B2),
@@ -128,68 +127,20 @@ class YkaiCores extends ThemeExtension<YkaiCores> {
 }
 
 extension YkaiContexto on BuildContext {
-  /// Cores do Ikai para o tema atual. Se o tema ainda não tiver a extensão
-  /// registrada (main.dart não ligado), usa a paleta clara.
   YkaiCores get cores =>
       Theme.of(this).extension<YkaiCores>() ?? YkaiCores.claro;
+
+  /// true quando o tema que está valendo agora é o escuro.
+  bool get modoEscuro => Theme.of(this).brightness == Brightness.dark;
+
+  Color corDestaque(Color base) =>
+      modoEscuro ? Color.lerp(base, Colors.white, 0.35)! : base;
+
+  Color fundoDestaque(Color fundoClaro, Color base) =>
+      modoEscuro ? base.withValues(alpha: 0.22) : fundoClaro;
 }
 
-/// Preferências de aparência de todo o aplicativo.
-class AparenciaController extends ChangeNotifier {
-  AparenciaController._();
-
-  static final AparenciaController instancia = AparenciaController._();
-
-  static const double tamanhoMinimo = 0.8;
-  static const double tamanhoMaximo = 1.4;
-
-  ThemeMode _tema = ThemeMode.light;
-  bool _altoContraste = false;
-  double _tamanhoTexto = 1.0;
-
-  ThemeMode get tema => _tema;
-  bool get altoContraste => _altoContraste;
-  double get tamanhoTexto => _tamanhoTexto;
-
-  void definirTema(ThemeMode valor) {
-    if (valor == _tema) return;
-    _tema = valor;
-    notifyListeners();
-  }
-
-  void definirAltoContraste(bool valor) {
-    if (valor == _altoContraste) return;
-    _altoContraste = valor;
-    notifyListeners();
-  }
-
-  void definirTamanhoTexto(double valor) {
-    final novo = valor.clamp(tamanhoMinimo, tamanhoMaximo).toDouble();
-    if (novo == _tamanhoTexto) return;
-    _tamanhoTexto = novo;
-    notifyListeners();
-  }
-
-  /// Escala de texto definida no sistema do aparelho (acessibilidade).
-  static double escalaDoSistema(BuildContext context) {
-    return MediaQueryData.fromView(View.of(context)).textScaler.scale(1.0);
-  }
-
-  /// Use em `MaterialApp(builder: AparenciaController.aplicarEscalaDeTexto)`.
-  /// Multiplica a escala do sistema pelo fator escolhido pelo usuário, o que
-  /// altera o tamanho de TODOS os textos do aplicativo.
-  static Widget aplicarEscalaDeTexto(BuildContext context, Widget? child) {
-    final mq = MediaQuery.of(context);
-    final fator = mq.textScaler.scale(1.0) * instancia.tamanhoTexto;
-
-    return MediaQuery(
-      data: mq.copyWith(textScaler: TextScaler.linear(fator)),
-      child: child ?? const SizedBox.shrink(),
-    );
-  }
-}
-
-/// Temas prontos para `MaterialApp(theme: ..., darkTheme: ...)`.
+/// Monta os temas do Ikai (claro/escuro, com ou sem alto contraste).
 class AparenciaTemas {
   AparenciaTemas._();
 
@@ -197,6 +148,7 @@ class AparenciaTemas {
     return _montar(
       Brightness.light,
       altoContraste ? YkaiCores.claroContraste : YkaiCores.claro,
+      altoContraste,
     );
   }
 
@@ -204,25 +156,236 @@ class AparenciaTemas {
     return _montar(
       Brightness.dark,
       altoContraste ? YkaiCores.escuroContraste : YkaiCores.escuro,
+      altoContraste,
     );
   }
 
-  /// Mesma semente de cor que o main.dart já usava. Mantida para que as
-  /// telas que ainda dependem do tema padrão não mudem de aparência.
-  static const Color sementeDeCor = Colors.blue;
+  /// Escolhe texto branco ou preto, o que contrastar mais com [fundo].
+  static Color _sobre(Color fundo) =>
+      ThemeData.estimateBrightnessForColor(fundo) == Brightness.dark
+          ? Colors.white
+          : Colors.black;
 
-  static ThemeData _montar(Brightness brilho, YkaiCores c) {
-    return ThemeData(
-      colorSchemeSeed: sementeDeCor,
+  static ThemeData _montar(
+    Brightness brilho,
+    YkaiCores c,
+    bool altoContraste,
+  ) {
+    final larguraBorda = altoContraste ? 1.5 : 1.0;
+    final sobreLaranja = _sobre(c.laranja);
+    final sobreVerde = _sobre(c.verde);
+
+    final esquema = ColorScheme.fromSeed(
+      seedColor: c.laranja,
       brightness: brilho,
+    ).copyWith(
+      primary: c.laranja,
+      onPrimary: sobreLaranja,
+      primaryContainer: c.laranjaClaro,
+      onPrimaryContainer: c.texto,
+      secondary: c.verde,
+      onSecondary: sobreVerde,
+      secondaryContainer: c.verdeClaro,
+      onSecondaryContainer: c.texto,
+      surface: c.fundo,
+      onSurface: c.texto,
+      onSurfaceVariant: c.textoSecundario,
+      outline: c.borda,
+      outlineVariant: c.borda,
+      surfaceContainerLowest: c.fundo,
+      surfaceContainerLow: c.cartao,
+      surfaceContainer: c.cartao,
+      surfaceContainerHigh: c.cartao,
+      surfaceContainerHighest: c.cartao,
+    );
+
+    final base = ThemeData(
       useMaterial3: true,
-      // Disponibiliza a paleta do Ikai para `context.cores`.
+      brightness: brilho,
+      colorScheme: esquema,
+    );
+
+    return base.copyWith(
+      scaffoldBackgroundColor: c.fundo,
       extensions: <ThemeExtension<dynamic>>[c],
+
+      // Todos os textos que não definem cor própria usam a cor do tema.
+      textTheme: base.textTheme.apply(
+        bodyColor: c.texto,
+        displayColor: c.texto,
+      ),
+      iconTheme: IconThemeData(color: c.texto),
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: c.fundo,
+        foregroundColor: c.texto,
+        iconTheme: IconThemeData(color: c.texto),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        // Ícones da barra de status (hora, bateria) legíveis nos dois temas.
+        systemOverlayStyle: brilho == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+      ),
+
+      cardTheme: CardThemeData(
+        color: c.cartao,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: c.borda, width: larguraBorda),
+        ),
+      ),
+
+      dialogTheme: DialogThemeData(
+        backgroundColor: c.cartao,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: c.borda, width: larguraBorda),
+        ),
+      ),
+
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: c.cartao,
+        modalBackgroundColor: c.cartao,
+        surfaceTintColor: Colors.transparent,
+      ),
+
+      popupMenuTheme: PopupMenuThemeData(
+        color: c.cartao,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: c.borda, width: larguraBorda),
+        ),
+      ),
+
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(c.cartao),
+          surfaceTintColor:
+              const WidgetStatePropertyAll(Colors.transparent),
+        ),
+      ),
+
+      dividerTheme: DividerThemeData(
+        color: c.borda,
+        thickness: larguraBorda,
+      ),
+
+      listTileTheme: ListTileThemeData(
+        textColor: c.texto,
+        iconColor: c.textoSecundario,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: c.textoSuave),
+        labelStyle: TextStyle(color: c.textoSecundario),
+        prefixIconColor: c.textoSecundario,
+        suffixIconColor: c.textoSecundario,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: c.borda, width: larguraBorda),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: c.laranja, width: 2),
+        ),
+      ),
+
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: c.laranja,
+        selectionHandleColor: c.laranja,
+        selectionColor: c.laranja.withValues(alpha: 0.3),
+      ),
+
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: c.cartao,
+        selectedItemColor: c.laranja,
+        unselectedItemColor: c.textoSuave,
+      ),
+
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: c.cartao,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: c.laranjaClaro,
+        iconTheme: WidgetStateProperty.resolveWith((estados) {
+          final ativo = estados.contains(WidgetState.selected);
+          return IconThemeData(
+            color: ativo ? c.laranja : c.textoSecundario,
+          );
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((estados) {
+          final ativo = estados.contains(WidgetState.selected);
+          return TextStyle(
+            color: ativo ? c.laranja : c.textoSecundario,
+          );
+        }),
+      ),
+
+      chipTheme: ChipThemeData(
+        backgroundColor: c.cartao,
+        selectedColor: c.laranjaClaro,
+        side: BorderSide(color: c.borda, width: larguraBorda),
+        labelStyle: TextStyle(color: c.texto),
+      ),
+
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: c.texto,
+        contentTextStyle: TextStyle(color: c.fundo),
+        actionTextColor: c.laranja,
+      ),
+
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: c.laranja,
+        linearTrackColor: c.laranjaClaro,
+      ),
+
+      sliderTheme: SliderThemeData(
+        activeTrackColor: c.verde,
+        inactiveTrackColor: c.laranjaClaro,
+        thumbColor: c.verde,
+        activeTickMarkColor: sobreVerde.withValues(alpha: 0.6),
+        inactiveTickMarkColor: c.textoSuave,
+      ),
+
+      // Chave liga/desliga: agora o estado "desligado" fica bem visível.
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith<Color?>((estados) {
-          if (estados.contains(WidgetState.selected)) return Colors.white;
-          return null;
+          if (estados.contains(WidgetState.selected)) return sobreVerde;
+          return c.textoSuave;
         }),
+        trackColor: WidgetStateProperty.resolveWith<Color?>((estados) {
+          if (estados.contains(WidgetState.selected)) return c.verde;
+          return c.borda;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((estados) {
+          if (estados.contains(WidgetState.selected)) {
+            return Colors.transparent;
+          }
+          return c.textoSuave;
+        }),
+      ),
+
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((estados) {
+          if (estados.contains(WidgetState.selected)) return c.verde;
+          return c.textoSecundario;
+        }),
+      ),
+
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((estados) {
+          if (estados.contains(WidgetState.selected)) return c.verde;
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStatePropertyAll(sobreVerde),
+        side: WidgetStateBorderSide.resolveWith(
+          (estados) => BorderSide(color: c.textoSecundario, width: 2),
+        ),
       ),
     );
   }

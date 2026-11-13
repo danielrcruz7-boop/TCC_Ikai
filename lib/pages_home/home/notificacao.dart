@@ -362,7 +362,9 @@ class _notificacaoPageState extends State<notificacaoPage> {
         style: GoogleFonts.inter(
           fontSize: 13,
           fontWeight: FontWeight.w600,
-          color: selecionado ? Colors.white : c.texto,
+          color: selecionado
+              ? Theme.of(context).colorScheme.onPrimary
+              : c.texto,
         ),
       ),
       selected: selecionado,
@@ -381,9 +383,9 @@ class _notificacaoPageState extends State<notificacaoPage> {
     final fundoAcao = Container(
       alignment: Alignment.center,
       color: c.laranja,
-      child: const Icon(
+      child: Icon(
         Icons.delete_outline,
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.onPrimary,
         size: 24,
       ),
     );

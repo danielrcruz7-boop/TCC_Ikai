@@ -12,7 +12,7 @@ import '../perfil/perfil.dart';
 import '../progresso.dart';
 import '../explorar/explorar.dart';
 
-import '../perfil/perfil.dart';
+import 'package:ikai/tema.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -60,8 +60,10 @@ void vizualizar() {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFBF7),
+      backgroundColor: c.fundo,
 
       body: indiceAtual == 0
           ? SingleChildScrollView(
@@ -86,12 +88,12 @@ void vizualizar() {
           child: Container(
               width: 55,
               height: 55,
-              color: const Color.fromARGB(255, 237, 241, 243),
+              color: c.borda,
               child: bytesFoto == null
-                  ? const Icon(
+                  ? Icon(
                       Icons.person_outline_rounded,
                       size: 32,
-                      color: Color(0xFFCB5A34),
+                      color: c.laranja,
                     )
                   : Image.memory(
                       bytesFoto,
@@ -100,10 +102,10 @@ void vizualizar() {
                       height: 55,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
+                        return Icon(
                           Icons.person_outline_rounded,
                           size: 32,
-                          color: Color(0xFFE58A45),
+                          color: c.laranja,
                         );
                       },
                     ),
@@ -123,6 +125,7 @@ void vizualizar() {
             style: GoogleFonts.inter(
               fontSize: 13,
               fontWeight: FontWeight.w400,
+              color: c.texto,
             ),
           ),
           // Nome: acompanha o nome editado no Perfil
@@ -137,6 +140,7 @@ void vizualizar() {
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
+                  color: c.texto,
                 ),
               );
             },
@@ -155,14 +159,14 @@ void vizualizar() {
       child: ElevatedButton(
         onPressed: notificacoes,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF243044),
+          backgroundColor: c.cartao,
+          foregroundColor: c.texto,
           elevation: 0,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(
-              color: Color(0xFFE7EDF1),
+            side: BorderSide(
+              color: c.borda,
               width: 2,
             ),
           ),
@@ -184,18 +188,18 @@ void vizualizar() {
                   TextField(
                     controller: pesquisaController,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search,
-                        color: Colors.black,
+                        color: c.texto,
                       ),
                       hintText:
                           'Como você quer se cuidar hoje?',
                       hintStyle: GoogleFonts.inter(
                         fontSize: 13,
-                        color: const Color(0xFF6B7280),
+                        color: c.textoSecundario,
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: c.cartao,
                       contentPadding:
                           const EdgeInsets.symmetric(
                         vertical: 16,
@@ -203,15 +207,15 @@ void vizualizar() {
                       enabledBorder: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(19),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE7EDF1),
+                        borderSide: BorderSide(
+                          color: c.borda,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(19),
-                        borderSide: const BorderSide(
-                          color: Color(0xFF6B7280),
+                        borderSide: BorderSide(
+                          color: c.textoSecundario,
                           width: 1.5,
                         ),
                       ),
@@ -255,43 +259,57 @@ void vizualizar() {
       // =========================
       // NAVEGAÇÃO INFERIOR
       // =========================
-      bottomNavigationBar: NavigationBar(
-        height: 68,
-        backgroundColor: Colors.deepPurple.shade50,
-        indicatorColor: Colors.deepPurple.shade50,
-        selectedIndex: indiceAtual,
-        onDestinationSelected: (novoIndice) {
-          setState(() {
-            indiceAtual = novoIndice;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Explorar',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: 'Comunidade',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Progresso',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
+bottomNavigationBar: NavigationBarTheme(
+  data: NavigationBarTheme.of(context).copyWith(
+    labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+      final selecionado = states.contains(WidgetState.selected);
+      return GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: selecionado ? FontWeight.w600 : FontWeight.w500,
+        letterSpacing: 0,
+        color: selecionado ? c.laranja : c.textoSecundario,
+      );
+    }),
+  ),
+  child: NavigationBar(
+    height: 80,
+    backgroundColor: c.cartao,
+    indicatorColor: c.laranjaClaro,
+    selectedIndex: indiceAtual,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+    onDestinationSelected: (novoIndice) {
+      setState(() {
+        indiceAtual = novoIndice;
+      });
+    },
+    destinations: const [
+      NavigationDestination(
+        icon: Icon(Icons.home_outlined),
+        selectedIcon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.explore_outlined),
+        selectedIcon: Icon(Icons.explore),
+        label: 'Explorar',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.people_outline),
+        selectedIcon: Icon(Icons.people),
+        label: 'Comunidade',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.bar_chart_outlined),
+        selectedIcon: Icon(Icons.bar_chart),
+        label: 'Progresso',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.person_outline),
+        selectedIcon: Icon(Icons.person),
+        label: 'Perfil',
+      ),
+    ],
+  ),
       ),
     );
   }
@@ -306,11 +324,14 @@ class WellBeingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Container(
       width: double.infinity,
-      height: 200,
+      // Altura mínima (e não fixa): o cartão cresce se o texto aumentar.
+      constraints: const BoxConstraints(minHeight: 200),
       decoration: BoxDecoration(
-        color: const Color(0xFFFBEFEA),
+        color: c.laranjaClaro,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(24),
@@ -329,10 +350,10 @@ class WellBeingCard extends StatelessWidget {
                 child: CustomPaint(
                   painter: CircularProgressPainter(
                     percent: 84 / 100,
-                    progressColor:
-                        const Color(0xFFCB5A34),
-                    backgroundColor:
-                        const Color(0xFFE8D5B0),
+                    progressColor: c.laranja,
+                    backgroundColor: context.modoEscuro
+                        ? c.borda
+                        : const Color(0xFFE8D5B0),
                   ),
                 ),
               ),
@@ -343,7 +364,7 @@ class WellBeingCard extends StatelessWidget {
                   Text(
                     '84%',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFCB5A34),
+                      color: c.laranja,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -351,7 +372,7 @@ class WellBeingCard extends StatelessWidget {
                   Text(
                     'GERAL',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF7F8C8D),
+                      color: c.textoSecundario,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -378,14 +399,14 @@ class WellBeingCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEAF5EF),
+                    color: c.verdeClaro,
                     borderRadius:
                         BorderRadius.circular(16),
                   ),
                   child: Text(
                     'FOCO NO PRESENTE',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF4C8D67),
+                      color: c.verde,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -398,7 +419,7 @@ class WellBeingCard extends StatelessWidget {
                 Text(
                   'Seu bem-estar está florescendo hoje.',
                   style: GoogleFonts.inter(
-                    color: const Color.fromARGB(255, 0, 0, 0),
+                    color: c.texto,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                     height: 1.3,
@@ -411,7 +432,7 @@ class WellBeingCard extends StatelessWidget {
                 Text(
                   'Que tal praticar 10 minutos de respiração para cultivar calma?',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF7F8C8D),
+                    color: c.textoSecundario,
                     fontSize: 14,
                     height: 1.5,
                   ),
@@ -500,6 +521,8 @@ class QuickPracticesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -513,13 +536,13 @@ class QuickPracticesSection extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF243044),
+                color: c.texto,
               ),
             ),
             TextButton(
               onPressed: vizualizar,
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFD84925),
+                foregroundColor: c.laranja,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 4,
                   vertical: 4,
@@ -532,7 +555,7 @@ class QuickPracticesSection extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFD84925),
+                  color: c.laranja,
                 ),
               ),
             ),
@@ -579,16 +602,18 @@ class QuickPracticeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Container(
       width: _width,
       height: _height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: c.cartao,
         borderRadius: BorderRadius.circular(_radius),
-        border: Border.all(color: const Color(0xFFE7EDF1)),
+        border: Border.all(color: c.borda),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -607,7 +632,7 @@ class QuickPracticeCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildCircularImage(),
+                _buildCircularImage(context),
                 const SizedBox(height: 8),
                 Text(
                   pratica.title,
@@ -617,7 +642,7 @@ class QuickPracticeCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF243044),
+                    color: c.texto,
                   ),
                 ),
               ],
@@ -628,18 +653,21 @@ class QuickPracticeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCircularImage() {
+  Widget _buildCircularImage(BuildContext context) {
     final fallback = Container(
       width: _imageSize,
       height: _imageSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: pratica.backgroundColor,
+        color: context.fundoDestaque(
+          pratica.backgroundColor,
+          pratica.iconColor,
+        ),
       ),
       child: Icon(
         pratica.icon,
         size: 24,
-        color: pratica.iconColor,
+        color: context.corDestaque(pratica.iconColor),
       ),
     );
 
@@ -706,6 +734,8 @@ class ActivitiesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -714,7 +744,7 @@ class ActivitiesSection extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF243044),
+            color: c.texto,
           ),
         ),
 
@@ -734,13 +764,14 @@ class ActivityProgressCard extends StatelessWidget {
 
   const ActivityProgressCard({super.key, required this.atividade});
 
-  static const Color _textoPrincipal = Color(0xFF243044);
-  static const Color _textoSecundario = Color(0xFF7B8494);
-  static const Color _fundoBarra = Color(0xFFEAF0F1);
-
   @override
   Widget build(BuildContext context) {
+    final c = context.cores;
     final porcentagem = (atividade.progress * 100).round();
+
+    // A coluna do subtítulo cresce com o texto, mantendo as barras alinhadas.
+    final escala =
+        MediaQuery.textScalerOf(context).scale(1.0).clamp(1.0, 2.0).toDouble();
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -748,9 +779,9 @@ class ActivityProgressCard extends StatelessWidget {
         vertical: 10,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: c.cartao,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE7EDF1)),
+        border: Border.all(color: c.borda),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -767,7 +798,7 @@ class ActivityProgressCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: _textoPrincipal,
+                    color: c.texto,
                   ),
                 ),
               ),
@@ -777,7 +808,7 @@ class ActivityProgressCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: _textoPrincipal,
+                  color: c.texto,
                 ),
               ),
             ],
@@ -789,14 +820,14 @@ class ActivityProgressCard extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 64,
+                width: 64 * escala,
                 child: Text(
                   atividade.subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     fontSize: 12,
-                    color: _textoSecundario,
+                    color: c.textoSecundario,
                   ),
                 ),
               ),
@@ -807,9 +838,9 @@ class ActivityProgressCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: atividade.progress,
                     minHeight: 6,
-                    backgroundColor: _fundoBarra,
+                    backgroundColor: c.borda,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      atividade.color,
+                      context.corDestaque(atividade.color),
                     ),
                   ),
                 ),

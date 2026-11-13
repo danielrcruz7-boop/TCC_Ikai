@@ -37,7 +37,8 @@ import './pages_home/perfil/botoes_configuracao/ajuda_e_informacoes/sobre_ikai.d
 import './pages_home/perfil/botoes_configuracao/conta_e_sessao/sair_da_conta.dart';
 import './pages_home/perfil/botoes_configuracao/conta_e_sessao/excluir_conta.dart';
 
-import './pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart';
+import './pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart'
+    as tela_aparencia;
 
 import './pages_home/perfil/botoes_configuracao/notificao/notificacao.dart';
 
@@ -47,8 +48,7 @@ import './pages_home/perfil/botoes_configuracao/privacidade_e_segurança/termos_
 /*--------------------------------------*/
 
 // Aparência global (tema claro/escuro, alto contraste e tamanho do texto).
-import './tema.dart' hide AparenciaController, AparenciaTemas;
-
+import './tema.dart';
 /*--------------------------------------*/
 
 import './pages_home/explorar/explorar.dart';
@@ -78,18 +78,21 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Reconstrói o MaterialApp sempre que o usuário muda a aparência.
     return ListenableBuilder(
-      listenable: AparenciaController.instancia,
+      listenable: tela_aparencia.AparenciaController.instancia,
       builder: (context, _) {
-        final aparencia = AparenciaController.instancia;
+        final aparencia = tela_aparencia.AparenciaController.instancia;
 
         return MaterialApp(
           locale: DevicePreview.locale(context),
           navigatorKey: navigatorKey,
-          builder: (context, child) =>
-              AparenciaController.aplicarEscalaDeTexto(
-            context,
-            SessaoGuard(child: child!),
-          ),
+          builder: (context, child) {
+            return tela_aparencia.AparenciaController.aplicarEscalaDeTexto(
+              context,
+              SessaoGuard(
+                child: child ?? const SizedBox.shrink(),
+    ),
+  );
+},
           debugShowCheckedModeBanner: false,
           title: 'Ikai',
           theme: AparenciaTemas.claro(

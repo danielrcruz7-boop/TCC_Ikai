@@ -134,7 +134,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
                   ),
                 ),
               ),
-              const ChipTempoRestante(),
+
             ],
           ),
           if (pref != null) ...[

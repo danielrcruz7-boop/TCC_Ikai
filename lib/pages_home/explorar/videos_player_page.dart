@@ -263,7 +263,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _avisoDeTempo(),
                         Wrap(
                           spacing: 6,
                           runSpacing: 4,
@@ -274,12 +273,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                               cor: EstiloIkai.laranja,
                               fundo: EstiloIkai.laranjaSuave,
                             ),
-                            RotuloChip(texto: widget.categoriaTitulo),
-                            if (c.duracaoSegundos != null)
-                              RotuloChip(
-                                texto: formatarRelogio(c.duracaoSegundos!),
-                                icone: Icons.schedule,
-                              ),
                           ],
                         ),
                         const SizedBox(height: 14),

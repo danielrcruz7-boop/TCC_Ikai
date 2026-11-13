@@ -214,7 +214,6 @@ class BarraTopoConteudo extends StatelessWidget {
               ),
             ),
           ),
-          const ChipTempoRestante(),
         ],
       ),
     );

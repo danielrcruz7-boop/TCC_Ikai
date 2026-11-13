@@ -1,265 +1,106 @@
 import 'package:flutter/material.dart';
- 
-// =====================================================================
-// APARÊNCIA GLOBAL DO IKAI
-//
-// Este arquivo concentra:
-//  1. YkaiCores            -> paleta de cores (clara, escura e alto contraste)
-//  2. AparenciaController  -> preferências: tema, alto contraste, tamanho do texto
-//  3. AparenciaTemas       -> ThemeData claro/escuro prontos para o MaterialApp
-//
-// Para as telas mudarem de cor junto com o tema, elas precisam usar
-// `context.cores.xxx` no lugar de cores fixas (Color(0xFF...), Colors.white).
-//
-// ATENÇÃO: as preferências ficam apenas em MEMÓRIA. Ao fechar o aplicativo
-// voltam ao padrão. Para salvar de forma permanente, use algo como
-// shared_preferences dentro de AparenciaController.
-// =====================================================================
- 
-/// Paleta do Ikai. Fica registrada no ThemeData (extensions) e é lida com
-/// `context.cores`.
-class YkaiCores extends ThemeExtension<YkaiCores> {
-  final Color fundo;
-  final Color cartao;
-  final Color texto;
-  final Color textoSecundario;
-  final Color textoSuave;
-  final Color borda;
-  final Color laranja;
-  final Color laranjaClaro;
-  final Color verde;
-  final Color verdeClaro;
- 
-  const YkaiCores({
-    required this.fundo,
-    required this.cartao,
-    required this.texto,
-    required this.textoSecundario,
-    required this.textoSuave,
-    required this.borda,
-    required this.laranja,
-    required this.laranjaClaro,
-    required this.verde,
-    required this.verdeClaro,
-  });
- 
-  /// Cores originais do Ikai.
-  static const YkaiCores claro = YkaiCores(
-    fundo: Color(0xFFFDFBF7),
-    cartao: Color(0xFFFFFFFF),
-    texto: Color(0xFF243044),
-    textoSecundario: Color(0xFF757575),
-    textoSuave: Color(0xFF9E9E9E),
-    borda: Color(0xFFF0ECE6),
-    laranja: Color(0xFFCB5A34),
-    laranjaClaro: Color(0xFFFBEFEA),
-    verde: Color(0xFF4B7F5A),
-    verdeClaro: Color(0xFFEAF2EC),
-  );
- 
-  static const YkaiCores escuro = YkaiCores(
-    fundo: Color(0xFF14171C),
-    cartao: Color(0xFF1E232B),
-    texto: Color(0xFFEDEFF2),
-    textoSecundario: Color(0xFFA3ABB8),
-    textoSuave: Color(0xFF7D8696),
-    borda: Color(0xFF2D3440),
-    laranja: Color(0xFFE0714A),
-    laranjaClaro: Color(0xFF3A2620),
-    verde: Color(0xFF6FB383),
-    verdeClaro: Color(0xFF22332A),
-  );
- 
-  static const YkaiCores claroContraste = YkaiCores(
-    fundo: Color(0xFFFFFFFF),
-    cartao: Color(0xFFFFFFFF),
-    texto: Color(0xFF000000),
-    textoSecundario: Color(0xFF333333),
-    textoSuave: Color(0xFF595959),
-    borda: Color(0xFF595959),
-    laranja: Color(0xFFA8360F),
-    laranjaClaro: Color(0xFFFBE3D9),
-    verde: Color(0xFF2E6B3F),
-    verdeClaro: Color(0xFFDCEFE1),
-  );
- 
-  static const YkaiCores escuroContraste = YkaiCores(
-    fundo: Color(0xFF000000),
-    cartao: Color(0xFF0D0D0D),
-    texto: Color(0xFFFFFFFF),
-    textoSecundario: Color(0xFFE3E7ED),
-    textoSuave: Color(0xFFBFC6D1),
-    borda: Color(0xFF9AA3B2),
-    laranja: Color(0xFFFF8F63),
-    laranjaClaro: Color(0xFF3D2216),
-    verde: Color(0xFF8FE0A8),
-    verdeClaro: Color(0xFF163322),
-  );
- 
-  @override
-  YkaiCores copyWith({
-    Color? fundo,
-    Color? cartao,
-    Color? texto,
-    Color? textoSecundario,
-    Color? textoSuave,
-    Color? borda,
-    Color? laranja,
-    Color? laranjaClaro,
-    Color? verde,
-    Color? verdeClaro,
-  }) {
-    return YkaiCores(
-      fundo: fundo ?? this.fundo,
-      cartao: cartao ?? this.cartao,
-      texto: texto ?? this.texto,
-      textoSecundario: textoSecundario ?? this.textoSecundario,
-      textoSuave: textoSuave ?? this.textoSuave,
-      borda: borda ?? this.borda,
-      laranja: laranja ?? this.laranja,
-      laranjaClaro: laranjaClaro ?? this.laranjaClaro,
-      verde: verde ?? this.verde,
-      verdeClaro: verdeClaro ?? this.verdeClaro,
-    );
-  }
- 
-  @override
-  YkaiCores lerp(ThemeExtension<YkaiCores>? other, double t) {
-    if (other is! YkaiCores) return this;
- 
-    Color l(Color a, Color b) => Color.lerp(a, b, t)!;
- 
-    return YkaiCores(
-      fundo: l(fundo, other.fundo),
-      cartao: l(cartao, other.cartao),
-      texto: l(texto, other.texto),
-      textoSecundario: l(textoSecundario, other.textoSecundario),
-      textoSuave: l(textoSuave, other.textoSuave),
-      borda: l(borda, other.borda),
-      laranja: l(laranja, other.laranja),
-      laranjaClaro: l(laranjaClaro, other.laranjaClaro),
-      verde: l(verde, other.verde),
-      verdeClaro: l(verdeClaro, other.verdeClaro),
-    );
-  }
-}
- 
-extension YkaiContexto on BuildContext {
-  /// Cores do Ikai para o tema atual. Se o tema ainda não tiver a extensão
-  /// registrada (main.dart não ligado), usa a paleta clara.
-  YkaiCores get cores =>
-      Theme.of(this).extension<YkaiCores>() ?? YkaiCores.claro;
-}
- 
-/// Preferências de aparência de todo o aplicativo.
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Controla as preferências de aparência do Ikai (tema, alto contraste e
+/// tamanho do texto) e as salva no aparelho.
+///
+/// É um "singleton": existe uma única instância (`AparenciaController.instancia`)
+/// usada pelo main.dart (para montar o MaterialApp) e pela tela de
+/// Configurações (para o usuário escolher as opções).
 class AparenciaController extends ChangeNotifier {
   AparenciaController._();
- 
+
   static final AparenciaController instancia = AparenciaController._();
- 
+
   static const double tamanhoMinimo = 0.8;
   static const double tamanhoMaximo = 1.4;
- 
+
+  /// Limite de segurança: escala do celular × escala do app nunca passa disso,
+  /// para o layout não quebrar em casos extremos.
+  static const double escalaMaximaTotal = 2.0;
+
+  // Chaves usadas para guardar os valores no aparelho.
+  static const String _chaveTema = 'aparencia_tema';
+  static const String _chaveContraste = 'aparencia_alto_contraste';
+  static const String _chaveTamanho = 'aparencia_tamanho_texto';
+
+  SharedPreferences? _prefs;
+
   ThemeMode _tema = ThemeMode.light;
   bool _altoContraste = false;
   double _tamanhoTexto = 1.0;
- 
+
   ThemeMode get tema => _tema;
   bool get altoContraste => _altoContraste;
   double get tamanhoTexto => _tamanhoTexto;
- 
+
+  /// Lê as preferências salvas. Chame no main() ANTES do runApp, assim o app
+  /// já abre com o tema correto (sem "piscar" no tema errado).
+  Future<void> carregar() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _prefs = prefs;
+
+      final nomeTema = prefs.getString(_chaveTema);
+      _tema = ThemeMode.values.firstWhere(
+        (modo) => modo.name == nomeTema,
+        orElse: () => ThemeMode.light,
+      );
+
+      _altoContraste = prefs.getBool(_chaveContraste) ?? false;
+
+      final tamanho = prefs.getDouble(_chaveTamanho);
+      if (tamanho != null) {
+        _tamanhoTexto =
+            tamanho.clamp(tamanhoMinimo, tamanhoMaximo).toDouble();
+      }
+    } catch (_) {
+      // Se a leitura falhar, o app simplesmente usa os valores padrão.
+    }
+  }
+
   void definirTema(ThemeMode valor) {
-    if (valor == _tema) return;
+    if (_tema == valor) return;
     _tema = valor;
+    _prefs?.setString(_chaveTema, valor.name);
     notifyListeners();
   }
- 
+
   void definirAltoContraste(bool valor) {
-    if (valor == _altoContraste) return;
+    if (_altoContraste == valor) return;
     _altoContraste = valor;
+    _prefs?.setBool(_chaveContraste, valor);
     notifyListeners();
   }
- 
+
   void definirTamanhoTexto(double valor) {
     final novo = valor.clamp(tamanhoMinimo, tamanhoMaximo).toDouble();
-    if (novo == _tamanhoTexto) return;
+    if (_tamanhoTexto == novo) return;
     _tamanhoTexto = novo;
+    _prefs?.setDouble(_chaveTamanho, novo);
     notifyListeners();
   }
- 
-  /// Escala de texto definida no sistema do aparelho (acessibilidade).
-  static double escalaDoSistema(BuildContext context) {
-    return MediaQueryData.fromView(View.of(context)).textScaler.scale(1.0);
-  }
- 
-  /// Use em `MaterialApp(builder: AparenciaController.aplicarEscalaDeTexto)`.
-  /// Multiplica a escala do sistema pelo fator escolhido pelo usuário, o que
-  /// altera o tamanho de TODOS os textos do aplicativo.
+
+  /// Usada no `builder` do MaterialApp: multiplica a escala de texto do
+  /// celular pela escolha do usuário e aplica em TODAS as páginas.
   static Widget aplicarEscalaDeTexto(BuildContext context, Widget? child) {
     final mq = MediaQuery.of(context);
-    final fator = mq.textScaler.scale(1.0) * instancia.tamanhoTexto;
- 
+
+    final fator = (mq.textScaler.scale(1.0) * instancia.tamanhoTexto)
+        .clamp(0.5, escalaMaximaTotal)
+        .toDouble();
+
     return MediaQuery(
       data: mq.copyWith(textScaler: TextScaler.linear(fator)),
       child: child ?? const SizedBox.shrink(),
     );
   }
-}
- 
-/// Temas prontos para `MaterialApp(theme: ..., darkTheme: ...)`.
-class AparenciaTemas {
-  AparenciaTemas._();
- 
-  static ThemeData claro({bool altoContraste = false}) {
-    return _montar(
-      Brightness.light,
-      altoContraste ? YkaiCores.claroContraste : YkaiCores.claro,
-    );
-  }
- 
-  static ThemeData escuro({bool altoContraste = false}) {
-    return _montar(
-      Brightness.dark,
-      altoContraste ? YkaiCores.escuroContraste : YkaiCores.escuro,
-    );
-  }
- 
-  static ThemeData _montar(Brightness brilho, YkaiCores c) {
-    final esquema = ColorScheme.fromSeed(
-      seedColor: c.laranja,
-      brightness: brilho,
-    ).copyWith(
-      primary: c.laranja,
-      onPrimary: Colors.white,
-      secondary: c.verde,
-      surface: c.fundo,
-      onSurface: c.texto,
-      onSurfaceVariant: c.textoSecundario,
-      outline: c.borda,
-      surfaceContainer: c.cartao,
-      surfaceContainerHigh: c.cartao,
-    );
- 
-    return ThemeData(
-      useMaterial3: true,
-      brightness: brilho,
-      colorScheme: esquema,
-      scaffoldBackgroundColor: c.fundo,
-      extensions: <ThemeExtension<dynamic>>[c],
-      appBarTheme: AppBarTheme(
-        backgroundColor: c.fundo,
-        foregroundColor: c.texto,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-      ),
-      dividerTheme: DividerThemeData(color: c.borda),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith<Color?>((estados) {
-          if (estados.contains(WidgetState.selected)) return Colors.white;
-          return null;
-        }),
-      ),
-    );
+
+  /// Escala de texto do CELULAR (sem a escolha do usuário). Só funciona
+  /// dentro de páginas do app, pois o MediaQuery delas já vem multiplicado.
+  /// Usada na prévia ao vivo da tela de Configurações.
+  static double escalaDoSistema(BuildContext context) {
+    final aplicada = MediaQuery.textScalerOf(context).scale(1.0);
+    return aplicada / instancia.tamanhoTexto;
   }
 }

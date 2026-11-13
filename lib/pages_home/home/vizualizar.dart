@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ikai/tema.dart';
@@ -48,6 +47,11 @@ class PraticasPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.cores;
+
+    // A altura dos cartões cresce junto com o tamanho do texto,
+    // para nada ser cortado.
+    final escala =
+        MediaQuery.textScalerOf(context).scale(1.0).clamp(1.0, 2.0).toDouble();
 
     return Scaffold(
       backgroundColor: c.fundo,
@@ -147,12 +151,11 @@ class PraticasPage extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _praticas.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 14,
-                      childAspectRatio: 1.15,
+                      mainAxisExtent: 110 + 33 * escala,
                     ),
                     itemBuilder: (context, index) {
                       final pratica = _praticas[index];
@@ -187,34 +190,45 @@ class PraticasPage extends StatelessWidget {
                                   width: 52,
                                   height: 52,
                                   decoration: BoxDecoration(
-                                    color: pratica.backgroundColor,
+                                    color: context.fundoDestaque(
+                                      pratica.backgroundColor,
+                                      pratica.iconColor,
+                                    ),
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: Icon(
                                     pratica.icon,
-                                    color: pratica.iconColor,
+                                    color: context.corDestaque(pratica.iconColor),
                                     size: 27,
                                   ),
                                 ),
 
                                 const SizedBox(height: 14),
 
-                                Text(
-                                  pratica.title,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: c.texto,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    pratica.title,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: c.texto,
+                                    ),
                                   ),
                                 ),
 
                                 const SizedBox(height: 4),
 
-                                Text(
-                                  'Explorar prática',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    color: c.textoSecundario,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Explorar prática',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      color: c.textoSecundario,
+                                    ),
                                   ),
                                 ),
                               ],
