@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ikai/pages_home/perfil/botoes_configuracao/aparencia/aparencia.dart';
+import 'package:ikai/tema.dart';
 
 // Testa a aparência usada pelo MaterialApp (main.dart) e pelas telas de
 // Perfil/Configurações: lib/pages_home/perfil/botoes_configuracao/aparencia.
